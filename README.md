@@ -1,5 +1,7 @@
-# node-auth-demo
-Simple node authentication demo from https://scotch.io/tutorials/easy-node-authentication-google
+# Todo demo
+Basic todo and project starter. Node/Express server using Passport for authentication, Webpack and Angular front-end. 
+
+Authentication setup from [scotch.io](https://scotch.io/tutorials/easy-node-authentication-google).
 
 ## Installation
 
