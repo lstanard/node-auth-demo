@@ -57,6 +57,13 @@ module.exports = function(app, passport) {
     });
 
     // =====================================
+    // TODOS ===============================
+    // =====================================
+    app.get('/todos', function(req, res) {
+        // Send todos as json
+    });
+
+    // =====================================
     // SINGLE VIEW FILE ====================
     // =====================================
 
@@ -64,13 +71,6 @@ module.exports = function(app, passport) {
     app.use('/', function(req, res) {
         res.sendfile('./public/index.html');
     });
-
-    // =====================================
-    // TODOS ===============================
-    // =====================================
-    // app.get('/api/todos', function(req, res) {
-    //     // Send todos as json
-    // });
 
 };
 
