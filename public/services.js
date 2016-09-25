@@ -1,11 +1,11 @@
 module.exports = function (app) {
-	return app
+    return app
         .factory('Todos', function ($resource) {
             return $resource('/api/todos/:todo_id', { todo_id: '@todo_id' });
         })
-		.factory('Login', function ($resource) {
-			return $resource('/login');
-		})
+        .factory('Login', function ($resource) {
+            return $resource('/login');
+        })
         .factory('Logout', function ($resource) {
             return $resource('/logout');
         })
@@ -13,28 +13,28 @@ module.exports = function (app) {
             return $resource('/signup');
         })
         .factory('User', function ($resource) {
-        	return $resource('/user', {}, {
-        		'query': {
-        			method: 'GET',
-        			isArray: false
-        		}
-        	});
+            return $resource('/user', {}, {
+                'query': {
+                    method: 'GET',
+                    isArray: false
+                }
+            });
         })
         .factory('Authentication', function ($q, $rootScope, User) {
-        	return {
-        		authenticate: function () {
-        			if ($rootScope.user) {
-        				return $q.resolve($rootScope.user);
-        			} else {
-        				var user = User.query();
-        				return user.$promise.then(function(data) {
-        					$rootScope.user = data.local;
-        					return true;
-        				}, function(error) {
-        					return $q.reject('Not authenticated');
-        				});
-        			}
-        		}
-        	}
+            return {
+                authenticate: function () {
+                    if ($rootScope.user) {
+                        return $q.resolve($rootScope.user);
+                    } else {
+                        var user = User.query();
+                        return user.$promise.then(function(data) {
+                            $rootScope.user = data.local;
+                            return true;
+                        }, function(error) {
+                            return $q.reject('Not authenticated');
+                        });
+                    }
+                }
+            }
         });
 };

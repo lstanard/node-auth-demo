@@ -48,68 +48,11 @@
 	var ngRoute     = __webpack_require__(3);
 	var ngResource  = __webpack_require__(5);
 
-	var todoApp = angular.module('todo', ['ngRoute', 'ngResource']);
-
-	var services = __webpack_require__(7)(todoApp);
+	// Angular application
+	var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
+	var config      = __webpack_require__(9)(todoApp);
+	var services    = __webpack_require__(7)(todoApp);
 	var controllers = __webpack_require__(8)(todoApp);
-
-	// configure routes
-	todoApp
-	    .config(function($routeProvider, $locationProvider) {
-	        $routeProvider
-	            // route for the home page
-	            .when('/', {
-	                templateUrl: 'templates/home.html',
-	                controller: 'mainController'
-	            })
-	            // route for the login page
-	            .when('/login', {
-	                templateUrl: 'templates/login.html',
-	                controller: 'loginController'
-	            })
-	            // route for the logout
-	            .when('/logout', {
-	                templateUrl: 'templates/logout.html',
-	                controller: 'logoutController',
-	            })
-	            // route for the signup page
-	            .when('/signup', {
-	                templateUrl: 'templates/signup.html',
-	                controller: 'signupController'
-	            })
-	            // route for profile page
-	            .when('/profile', {
-	                templateUrl: 'templates/profile.html',
-	                controller: 'profileController',
-	                resolve: {
-	                    'auth': function(Authentication) {
-	                        return Authentication.authenticate();
-	                    }
-	                }
-	            })
-	            .when('/todos', {
-	                templateUrl: 'templates/todos.html',
-	                controller: 'todoController',
-	                resolve: {
-	                    'auth': function(Authentication) {
-	                        return Authentication.authenticate();
-	                    }
-	                }
-	            })
-	            .otherwise({
-	                redirectTo: '/'
-	            });
-
-	        // use the HTML5 History API
-	        $locationProvider.html5Mode(true);
-	    })
-	    .run(function($rootScope, $location) {
-	        $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-	            if (rejection === 'Not authenticated') {
-	                $location.path('/');
-	            }
-	        });
-	    });
 
 
 /***/ },
@@ -33858,13 +33801,13 @@
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
-		return app
+	    return app
 	        .factory('Todos', function ($resource) {
 	            return $resource('/api/todos/:todo_id', { todo_id: '@todo_id' });
 	        })
-			.factory('Login', function ($resource) {
-				return $resource('/login');
-			})
+	        .factory('Login', function ($resource) {
+	            return $resource('/login');
+	        })
 	        .factory('Logout', function ($resource) {
 	            return $resource('/logout');
 	        })
@@ -33872,29 +33815,29 @@
 	            return $resource('/signup');
 	        })
 	        .factory('User', function ($resource) {
-	        	return $resource('/user', {}, {
-	        		'query': {
-	        			method: 'GET',
-	        			isArray: false
-	        		}
-	        	});
+	            return $resource('/user', {}, {
+	                'query': {
+	                    method: 'GET',
+	                    isArray: false
+	                }
+	            });
 	        })
 	        .factory('Authentication', function ($q, $rootScope, User) {
-	        	return {
-	        		authenticate: function () {
-	        			if ($rootScope.user) {
-	        				return $q.resolve($rootScope.user);
-	        			} else {
-	        				var user = User.query();
-	        				return user.$promise.then(function(data) {
-	        					$rootScope.user = data.local;
-	        					return true;
-	        				}, function(error) {
-	        					return $q.reject('Not authenticated');
-	        				});
-	        			}
-	        		}
-	        	}
+	            return {
+	                authenticate: function () {
+	                    if ($rootScope.user) {
+	                        return $q.resolve($rootScope.user);
+	                    } else {
+	                        var user = User.query();
+	                        return user.$promise.then(function(data) {
+	                            $rootScope.user = data.local;
+	                            return true;
+	                        }, function(error) {
+	                            return $q.reject('Not authenticated');
+	                        });
+	                    }
+	                }
+	            }
 	        });
 	};
 
@@ -34004,6 +33947,71 @@
 	            };
 	        }]);
 	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        // configure routes
+	        .config(function($routeProvider, $locationProvider) {
+	            $routeProvider
+	                // route for the home page
+	                .when('/', {
+	                    templateUrl: 'templates/home.html',
+	                    controller: 'mainController'
+	                })
+	                // route for the login page
+	                .when('/login', {
+	                    templateUrl: 'templates/login.html',
+	                    controller: 'loginController'
+	                })
+	                // route for the logout
+	                .when('/logout', {
+	                    templateUrl: 'templates/logout.html',
+	                    controller: 'logoutController',
+	                })
+	                // route for the signup page
+	                .when('/signup', {
+	                    templateUrl: 'templates/signup.html',
+	                    controller: 'signupController'
+	                })
+	                // route for profile page
+	                .when('/profile', {
+	                    templateUrl: 'templates/profile.html',
+	                    controller: 'profileController',
+	                    resolve: {
+	                        'auth': function(Authentication) {
+	                            return Authentication.authenticate();
+	                        }
+	                    }
+	                })
+	                .when('/todos', {
+	                    templateUrl: 'templates/todos.html',
+	                    controller: 'todoController',
+	                    resolve: {
+	                        'auth': function(Authentication) {
+	                            return Authentication.authenticate();
+	                        }
+	                    }
+	                })
+	                .otherwise({
+	                    redirectTo: '/'
+	                });
+
+	            // use the HTML5 History API
+	            $locationProvider.html5Mode(true);
+	        })
+	        .run(function($rootScope, $location) {
+	            $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
+	                if (rejection === 'Not authenticated') {
+	                    $location.path('/');
+	                }
+	            });
+	        });
+	};
+
 
 /***/ }
 /******/ ]);

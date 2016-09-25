@@ -9,7 +9,7 @@ module.exports = {
 		new ExtractTextPlugin('../css/[name].css', { allChunks: true })
 	],
 	output: {
-		path: __dirname + '/public/js/',
+		path: __dirname + '/public/assets/js/',
 		filename: "[name].entry.js"
 	},
 	module: {
