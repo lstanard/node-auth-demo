@@ -41,9 +41,9 @@ todoApp
                     }
                 }
             })
-            .when('/lists', {
-                templateUrl: 'templates/lists.html',
-                controller: 'listsController',
+            .when('/todos', {
+                templateUrl: 'templates/todos.html',
+                controller: 'todoController',
                 resolve: {
                     'auth': function(Authentication) {
                         return Authentication.authenticate();

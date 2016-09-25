@@ -30,8 +30,6 @@ app.use(bodyParser.json());                                     // parse applica
 app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse application/vnd.api+json as json
 app.use(methodOverride());
 
-app.set('view engine', 'ejs'); // set up ejs for templating
-
 // required for passport
 app.use(session({ secret: 'wubalubadubdub' })); // session secret
 app.use(passport.initialize());

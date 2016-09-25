@@ -1,5 +1,8 @@
 module.exports = function (app) {
 	return app
+        .factory('Todos', function ($resource) {
+            return $resource('/api/todos/:todo_id', { todo_id: '@todo_id' });
+        })
 		.factory('Login', function ($resource) {
 			return $resource('/login');
 		})

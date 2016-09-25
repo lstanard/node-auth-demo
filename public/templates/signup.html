@@ -11,9 +11,7 @@
             <input type="password" class="form-control" name="password" ng-model="password">
         </div>
         <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-        <div class="flash">
-            <p ng-repeat="error in errors">{{error}}</p>
-        </div>
+        <div ng-include="'templates/partials/error.html'"></div>
     </form>
     <hr>
     <p>Already have an account? <a href="/login">Login</a></p>

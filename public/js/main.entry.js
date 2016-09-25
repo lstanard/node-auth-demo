@@ -87,9 +87,9 @@
 	                    }
 	                }
 	            })
-	            .when('/lists', {
-	                templateUrl: 'templates/lists.html',
-	                controller: 'listsController',
+	            .when('/todos', {
+	                templateUrl: 'templates/todos.html',
+	                controller: 'todoController',
 	                resolve: {
 	                    'auth': function(Authentication) {
 	                        return Authentication.authenticate();
@@ -33859,6 +33859,9 @@
 
 	module.exports = function (app) {
 		return app
+	        .factory('Todos', function ($resource) {
+	            return $resource('/api/todos/:todo_id', { todo_id: '@todo_id' });
+	        })
 			.factory('Login', function ($resource) {
 				return $resource('/login');
 			})
@@ -33903,7 +33906,7 @@
 	module.exports = function (app) {
 	    return app
 	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-	            $scope.message = 'Node Authentication';
+	            $scope.message = 'Todo Demo';
 	        }])
 	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
 	            $scope.message = 'Login';
@@ -33917,7 +33920,7 @@
 
 	                if (!$scope.password) {
 	                    $scope.errors.push('Please enter a password.');
-	                }        
+	                }
 
 	                if ($scope.email && $scope.password) {
 	                    var data = {
@@ -33976,9 +33979,29 @@
 	            $scope.message = 'Your Profile';
 	            $scope.user = $rootScope.user;
 	        }])
-	        .controller('listsController', ['$scope', '$rootScope', function ($scope, $rootScope) {
-	            $scope.message = 'Your Lists';
+	        .controller('todoController', ['$scope', '$rootScope', 'Todos', function ($scope, $rootScope, Todos) {
+	            $scope.message = 'Your Todos';
 	            $scope.user = $rootScope.user;
+
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.todo) {
+	                    $scope.errors.push('You need to enter something to do!');
+	                }
+
+	                if ($scope.todo) {
+	                    var data = {
+	                        todo: $scope.todo
+	                    }
+	                    $scope.todo = Todos.save({}, data).$promise.then(function(result) {
+	                        console.log(result);
+	                        $scope.reset();
+	                    }, function (error) {
+	                        $scope.error = 'Something went wrong';
+	                    });
+	                }
+	            };
 	        }]);
 	};
 
