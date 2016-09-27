@@ -25,7 +25,7 @@ module.exports = function (app) {
                     $scope.user = Login.save({}, data).$promise.then(function (result) {
                         if (result) {
                             $rootScope.user = result.user.local;
-                            $location.path('/profile');
+                            $location.path('/todos');
                         } else {
                             $scope.error = 'Login failed.'
                         }
@@ -58,12 +58,12 @@ module.exports = function (app) {
                 }
 
                 if ($scope.email && $scope.password) {
-                    var data = {
+                    // Create new user
+                    $scope.user = Signup.save({}, {
                         email: $scope.email,
                         password: $scope.password
-                    };
-                    $scope.user = Signup.save({}, data).$promise.then(function () {
-                        $location.path('/profile');
+                    }).$promise.then(function () {
+                        $location.path('/todos');
                     }, function (error) {
                         $scope.error = 'Signup failed';
                     });
@@ -74,10 +74,14 @@ module.exports = function (app) {
             $scope.message = 'Your Profile';
             $scope.user = $rootScope.user;
         }])
-        .controller('todoController', ['$scope', '$rootScope', 'Todos', function ($scope, $rootScope, Todos) {
+        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
             $scope.message = 'Your Todos';
             $scope.user = $rootScope.user;
 
+            // Get all todos
+            $scope.todos = Todo.query();
+
+            // Save new todo
             $scope.submit = function () {
                 $scope.errors = [];
 
@@ -86,16 +90,28 @@ module.exports = function (app) {
                 }
 
                 if ($scope.todo) {
-                    var data = {
+                    var todo = Todo.save({}, {
                         todo: $scope.todo
-                    }
-                    $scope.todo = Todos.save({}, data).$promise.then(function(result) {
-                        console.log(result);
-                        $scope.reset();
+                    }).$promise.then(function(result) {
+                        $scope.todos.push(result);
+                        $scope.todo = $scope.errors = '';
                     }, function (error) {
+                        console.log(error);
                         $scope.error = 'Something went wrong';
                     });
                 }
+            };
+
+            // Delete todo
+            $scope.delete = function (todo) {
+                console.log(todo);
+                Todo.remove({
+                    id: todo._id
+                }, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                });
             };
         }]);
 };

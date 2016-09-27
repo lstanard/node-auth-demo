@@ -16,7 +16,7 @@
         <div ng-include="'templates/partials/error.html'"></div>
     </form>
 	<h2>All Todos</h2>
-	<ul>
-		<li>...</li>
-	</ul>
+	<ol class="list-group">
+		<li class="list-group-item" ng-repeat="todo in todos">{{todo.text}} <a href="#" ng-click="delete(todo); $event.preventDefault();"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></li>
+	</ol>
 </div>

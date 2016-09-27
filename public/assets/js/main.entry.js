@@ -50,9 +50,9 @@
 
 	// Angular application
 	var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
-	var config      = __webpack_require__(9)(todoApp);
-	var services    = __webpack_require__(7)(todoApp);
-	var controllers = __webpack_require__(8)(todoApp);
+	var config      = __webpack_require__(7)(todoApp);
+	var services    = __webpack_require__(8)(todoApp);
+	var controllers = __webpack_require__(9)(todoApp);
 
 
 /***/ },
@@ -33802,158 +33802,6 @@
 
 	module.exports = function (app) {
 	    return app
-	        .factory('Todos', function ($resource) {
-	            return $resource('/api/todos/:todo_id', { todo_id: '@todo_id' });
-	        })
-	        .factory('Login', function ($resource) {
-	            return $resource('/login');
-	        })
-	        .factory('Logout', function ($resource) {
-	            return $resource('/logout');
-	        })
-	        .factory('Signup', function ($resource) {
-	            return $resource('/signup');
-	        })
-	        .factory('User', function ($resource) {
-	            return $resource('/user', {}, {
-	                'query': {
-	                    method: 'GET',
-	                    isArray: false
-	                }
-	            });
-	        })
-	        .factory('Authentication', function ($q, $rootScope, User) {
-	            return {
-	                authenticate: function () {
-	                    if ($rootScope.user) {
-	                        return $q.resolve($rootScope.user);
-	                    } else {
-	                        var user = User.query();
-	                        return user.$promise.then(function(data) {
-	                            $rootScope.user = data.local;
-	                            return true;
-	                        }, function(error) {
-	                            return $q.reject('Not authenticated');
-	                        });
-	                    }
-	                }
-	            }
-	        });
-	};
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-	            $scope.message = 'Todo Demo';
-	        }])
-	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
-	            $scope.message = 'Login';
-
-	            $scope.submit = function() {
-	                $scope.errors = [];
-
-	                if (!$scope.email) {
-	                    $scope.errors.push('Please enter a valid email.');
-	                }
-
-	                if (!$scope.password) {
-	                    $scope.errors.push('Please enter a password.');
-	                }
-
-	                if ($scope.email && $scope.password) {
-	                    var data = {
-	                        email: $scope.email,
-	                        password: $scope.password
-	                    };
-	                    $scope.user = Login.save({}, data).$promise.then(function (result) {
-	                        if (result) {
-	                            $rootScope.user = result.user.local;
-	                            $location.path('/profile');
-	                        } else {
-	                            $scope.error = 'Login failed.'
-	                        }
-	                    }, function (error) {
-	                        console.log(error);
-	                    });
-	                }
-	            };
-	        }])
-	        .controller('logoutController', ['$scope', '$rootScope', '$location', 'Logout', function ($scope, $rootScope, $location, Logout) {
-	            Logout.get().$promise.then(function() {
-	                $rootScope.user = '';
-	                $location.path('/');
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }])
-	        .controller('signupController', ['$scope', '$location', 'Signup', function ($scope, $location, Signup) {
-	            $scope.message = 'Signup';
-
-	            $scope.submit = function () {
-	                $scope.errors = [];
-
-	                if (!$scope.email) {
-	                    $scope.errors.push('Please enter a valid email.');
-	                }
-
-	                if (!$scope.password) {
-	                    $scope.errors.push('Please enter a password.');
-	                }
-
-	                if ($scope.email && $scope.password) {
-	                    var data = {
-	                        email: $scope.email,
-	                        password: $scope.password
-	                    };
-	                    $scope.user = Signup.save({}, data).$promise.then(function () {
-	                        $location.path('/profile');
-	                    }, function (error) {
-	                        $scope.error = 'Signup failed';
-	                    });
-	                }
-	            };
-	        }])
-	        .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
-	            $scope.message = 'Your Profile';
-	            $scope.user = $rootScope.user;
-	        }])
-	        .controller('todoController', ['$scope', '$rootScope', 'Todos', function ($scope, $rootScope, Todos) {
-	            $scope.message = 'Your Todos';
-	            $scope.user = $rootScope.user;
-
-	            $scope.submit = function () {
-	                $scope.errors = [];
-
-	                if (!$scope.todo) {
-	                    $scope.errors.push('You need to enter something to do!');
-	                }
-
-	                if ($scope.todo) {
-	                    var data = {
-	                        todo: $scope.todo
-	                    }
-	                    $scope.todo = Todos.save({}, data).$promise.then(function(result) {
-	                        console.log(result);
-	                        $scope.reset();
-	                    }, function (error) {
-	                        $scope.error = 'Something went wrong';
-	                    });
-	                }
-	            };
-	        }]);
-	};
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
 	        // configure routes
 	        .config(function($routeProvider, $locationProvider) {
 	            $routeProvider
@@ -34012,6 +33860,178 @@
 	        });
 	};
 
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+
+	        // API resources
+	        .factory('Todo', function ($resource) {
+	            return $resource('/api/todos/');
+	        })
+
+	        // User services
+	        .factory('Login', function ($resource) {
+	            return $resource('/login');
+	        })
+	        .factory('Logout', function ($resource) {
+	            return $resource('/logout');
+	        })
+	        .factory('Signup', function ($resource) {
+	            return $resource('/signup');
+	        })
+	        .factory('User', function ($resource) {
+	            return $resource('/user', {}, {
+	                'query': {
+	                    method: 'GET',
+	                    isArray: false
+	                }
+	            });
+	        })
+	        .factory('Authentication', function ($q, $rootScope, User) {
+	            return {
+	                authenticate: function () {
+	                    if ($rootScope.user) {
+	                        return $q.resolve($rootScope.user);
+	                    } else {
+	                        var user = User.query();
+	                        return user.$promise.then(function(data) {
+	                            $rootScope.user = data.local;
+	                            return true;
+	                        }, function(error) {
+	                            return $q.reject('Not authenticated');
+	                        });
+	                    }
+	                }
+	            }
+	        });
+	};
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
+	            $scope.message = 'Todo Demo';
+	        }])
+	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
+	            $scope.message = 'Login';
+
+	            $scope.submit = function() {
+	                $scope.errors = [];
+
+	                if (!$scope.email) {
+	                    $scope.errors.push('Please enter a valid email.');
+	                }
+
+	                if (!$scope.password) {
+	                    $scope.errors.push('Please enter a password.');
+	                }
+
+	                if ($scope.email && $scope.password) {
+	                    var data = {
+	                        email: $scope.email,
+	                        password: $scope.password
+	                    };
+	                    $scope.user = Login.save({}, data).$promise.then(function (result) {
+	                        if (result) {
+	                            $rootScope.user = result.user.local;
+	                            $location.path('/todos');
+	                        } else {
+	                            $scope.error = 'Login failed.'
+	                        }
+	                    }, function (error) {
+	                        console.log(error);
+	                    });
+	                }
+	            };
+	        }])
+	        .controller('logoutController', ['$scope', '$rootScope', '$location', 'Logout', function ($scope, $rootScope, $location, Logout) {
+	            Logout.get().$promise.then(function() {
+	                $rootScope.user = '';
+	                $location.path('/');
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }])
+	        .controller('signupController', ['$scope', '$location', 'Signup', function ($scope, $location, Signup) {
+	            $scope.message = 'Signup';
+
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.email) {
+	                    $scope.errors.push('Please enter a valid email.');
+	                }
+
+	                if (!$scope.password) {
+	                    $scope.errors.push('Please enter a password.');
+	                }
+
+	                if ($scope.email && $scope.password) {
+	                    // Create new user
+	                    $scope.user = Signup.save({}, {
+	                        email: $scope.email,
+	                        password: $scope.password
+	                    }).$promise.then(function () {
+	                        $location.path('/todos');
+	                    }, function (error) {
+	                        $scope.error = 'Signup failed';
+	                    });
+	                }
+	            };
+	        }])
+	        .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+	            $scope.message = 'Your Profile';
+	            $scope.user = $rootScope.user;
+	        }])
+	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
+	            $scope.message = 'Your Todos';
+	            $scope.user = $rootScope.user;
+
+	            // Get all todos
+	            $scope.todos = Todo.query();
+
+	            // Save new todo
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.todo) {
+	                    $scope.errors.push('You need to enter something to do!');
+	                }
+
+	                if ($scope.todo) {
+	                    var todo = Todo.save({}, {
+	                        todo: $scope.todo
+	                    }).$promise.then(function(result) {
+	                        $scope.todos.push(result);
+	                        $scope.todo = $scope.errors = '';
+	                    }, function (error) {
+	                        console.log(error);
+	                        $scope.error = 'Something went wrong';
+	                    });
+	                }
+	            };
+
+	            // Delete todo
+	            $scope.delete = function (todo) {
+	                console.log(todo);
+	                Todo.remove({
+	                    id: todo._id
+	                }, function (err) {
+	                    if (err) {
+	                        return console.log(err);
+	                    }
+	                });
+	            };
+	        }]);
+	};
 
 /***/ }
 /******/ ]);

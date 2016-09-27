@@ -61,7 +61,7 @@ module.exports = function(app, passport) {
     // =====================================
     // TODOS ===============================
     // =====================================
-    app.get('/api/todos', function(req, res) {
+    app.get('/api/todos', isLoggedIn, function(req, res) {
         // get all todos in the database
         // need to modify to get all todos by user.id
         Todo.find(function(err, todos) {
@@ -72,7 +72,8 @@ module.exports = function(app, passport) {
         });
     });
 
-    app.post('/api/todos', function(req, res) {
+    // create new todo
+    app.post('/api/todos', isLoggedIn, function(req, res) {
         Todo.create({
             text: req.body.todo,
             done: false
@@ -80,29 +81,18 @@ module.exports = function(app, passport) {
             if (err)
                 res.send(err);
 
-            // get and return all todos after creating
-            Todo.find(function(err, todos) {
-                if (err)
-                    res.send(err);
-
-                res.json(todos);
-            });
+            res.json(todo); // return new todo as JSON
         })
     });
 
-    app.delete('/api/todos/:todo_id', function(req, res) {
+    app.delete('/api/todos/:id', isLoggedIn, function(req, res) {
         Todo.remove({
-            _id: req.params.todo_id
+            id: req.params.id
         }, function(err, todo) {
             if (err)
                 res.send(err);
 
-            Todo.find(function(err, todos) {
-                if (err)
-                    res.send(err);
-
-                res.json(todos);
-            });
+            res.json(todo);
         });
     });
 
