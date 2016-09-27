@@ -10,9 +10,13 @@
 	<form ng-submit="submit()">
         <div class="form-group">
             <label>What do you need to do?</label>
-            <input type="text" class="form-control" name="todo" ng-model="todo">
+            <div class="input-group">
+                <input type="text" class="form-control" name="todo" ng-model="todo">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </span>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg">Add</button>
         <div ng-include="'templates/partials/error.html'"></div>
     </form>
 	<h2>All Todos</h2>
