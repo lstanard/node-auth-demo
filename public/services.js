@@ -3,7 +3,8 @@ module.exports = function (app) {
 
         // API resources
         .factory('Todo', function ($resource) {
-            return $resource('/api/todos/');
+            return $resource('/api/todos/:todo_id',
+                { todo_id: '@todo_id' });
         })
 
         // User services

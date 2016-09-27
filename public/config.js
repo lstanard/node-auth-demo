@@ -33,6 +33,7 @@ module.exports = function (app) {
                         }
                     }
                 })
+                // route for todos page
                 .when('/todos', {
                     templateUrl: 'templates/todos.html',
                     controller: 'todoController',

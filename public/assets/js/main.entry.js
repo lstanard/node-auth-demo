@@ -33835,6 +33835,7 @@
 	                        }
 	                    }
 	                })
+	                // route for todos page
 	                .when('/todos', {
 	                    templateUrl: 'templates/todos.html',
 	                    controller: 'todoController',
@@ -33870,7 +33871,8 @@
 
 	        // API resources
 	        .factory('Todo', function ($resource) {
-	            return $resource('/api/todos/');
+	            return $resource('/api/todos/:todo_id',
+	                { todo_id: '@todo_id' });
 	        })
 
 	        // User services
@@ -34019,16 +34021,22 @@
 	                }
 	            };
 
+	            // Update/edit a todo
+
 	            // Delete todo
 	            $scope.delete = function (todo) {
-	                console.log(todo);
-	                Todo.remove({
-	                    id: todo._id
-	                }, function (err) {
-	                    if (err) {
-	                        return console.log(err);
-	                    }
-	                });
+
+	                if (todo) {
+	                    Todo.delete({
+	                        todo_id: todo._id 
+	                    }, function (err, todo) {
+	                        if (err) {
+	                            console.log(err);
+	                        }
+
+	                        console.log(todo);
+	                    });
+	                }
 	            };
 	        }]);
 	};

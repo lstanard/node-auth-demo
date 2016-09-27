@@ -102,16 +102,22 @@ module.exports = function (app) {
                 }
             };
 
+            // Update/edit a todo
+
             // Delete todo
             $scope.delete = function (todo) {
-                console.log(todo);
-                Todo.remove({
-                    id: todo._id
-                }, function (err) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                });
+
+                if (todo) {
+                    Todo.delete({
+                        todo_id: todo._id 
+                    }, function (err, todo) {
+                        if (err) {
+                            console.log(err);
+                        }
+
+                        console.log(todo);
+                    });
+                }
             };
         }]);
 };

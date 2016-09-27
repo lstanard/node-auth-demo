@@ -3,6 +3,58 @@ module.exports = function(app, passport) {
     var Todo = require('./models/todo');
 
     // =====================================
+    // TODOS ===============================
+    // =====================================
+    
+    // get all todos in the database
+    app.get('/api/todos', isLoggedIn, function(req, res) {
+        // need to modify to get all todos by user.id
+        Todo.find(function(err, todos) {
+            if (err)
+                res.send(err);
+
+            res.json(todos); // return all todos in JSON format
+        });
+    });
+
+    // create new todo
+    app.post('/api/todos', isLoggedIn, function(req, res) {
+        Todo.create({
+            text: req.body.todo,
+            done: false
+        }, function (err, todo) {
+            if (err)
+                res.send(err);
+
+            res.json(todo); // return new todo as JSON
+        })
+    });
+
+    // update a todo
+    app.put('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+        Todo.find({
+            _id: req.params.todo_id
+        }).update(function (err, todo) {
+            if (err)
+                res.send(err);
+
+            res.json(todo); // return updated todo as JSON
+        });
+    });
+
+    // delete a todo
+    app.delete('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+        Todo.find({
+            _id: req.params.todo_id
+        }).remove(function (err, todo) {
+            if (err)
+                res.send(err);
+
+            res.json(todo);
+        });
+    });
+
+    // =====================================
     // LOGIN ===============================
     // =====================================
 
@@ -56,44 +108,6 @@ module.exports = function(app, passport) {
     // =====================================
     app.get('/user', isLoggedIn, function(req, res) {
         res.send(req.isAuthenticated() ? req.user : '0');
-    });
-
-    // =====================================
-    // TODOS ===============================
-    // =====================================
-    app.get('/api/todos', isLoggedIn, function(req, res) {
-        // get all todos in the database
-        // need to modify to get all todos by user.id
-        Todo.find(function(err, todos) {
-            if (err)
-                res.send(err);
-
-            res.json(todos); // return all todos in JSON format
-        });
-    });
-
-    // create new todo
-    app.post('/api/todos', isLoggedIn, function(req, res) {
-        Todo.create({
-            text: req.body.todo,
-            done: false
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
-
-            res.json(todo); // return new todo as JSON
-        })
-    });
-
-    app.delete('/api/todos/:id', isLoggedIn, function(req, res) {
-        Todo.remove({
-            id: req.params.id
-        }, function(err, todo) {
-            if (err)
-                res.send(err);
-
-            res.json(todo);
-        });
     });
 
     // =====================================
