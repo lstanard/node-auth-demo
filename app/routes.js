@@ -8,10 +8,10 @@ module.exports = function(app, passport) {
     
     // get all todos in the database
     app.get('/api/todos', isLoggedIn, function(req, res) {
-        // need to modify to get all todos by user.id
         Todo.find(function(err, todos) {
-            if (err)
-                res.send(err);
+            if (err) {
+                return res.status(500).send(err);
+            }
 
             res.json(todos); // return all todos in JSON format
         });
@@ -32,25 +32,32 @@ module.exports = function(app, passport) {
 
     // update a todo
     app.put('/api/todos/:todo_id', isLoggedIn, function(req, res) {
-        Todo.find({
+        Todo.findOneAndUpdate({
             _id: req.params.todo_id
-        }).update(function (err, todo) {
-            if (err)
-                res.send(err);
+        }, {
+            text: req.body.todo
+        }, { new: true }, function (err, todo) {
+            if (err) {
+                return res.status(500).json(err);
+            }
 
-            res.json(todo); // return updated todo as JSON
+            res.json(todo); // return updated todo as json
         });
     });
 
     // delete a todo
     app.delete('/api/todos/:todo_id', isLoggedIn, function(req, res) {
-        Todo.find({
+        Todo.remove({
             _id: req.params.todo_id
-        }).remove(function (err, todo) {
-            if (err)
-                res.send(err);
+        }, function (err, obj) {
+            if (err) {
+                return res.status(500).json(err);
+            }
 
-            res.json(todo);
+            if (obj.result.n === 0)
+                res.send('Todo not found');
+
+            res.send(); // no reponse data
         });
     });
 
