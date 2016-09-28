@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = function (app) {
     return app
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
@@ -103,19 +105,26 @@ module.exports = function (app) {
             };
 
             // Update/edit a todo
+            $scope.update = function (todo) {
+                if (todo) {
+                    Todo.update(
+                        // Find todo by id
+                        { todo_id: todo._id },
+                        // Properties to update
+                        { todo: todo.text }
+                    );
+                }
+            };
 
             // Delete todo
             $scope.delete = function (todo) {
-
                 if (todo) {
+                    var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
+
                     Todo.delete({
                         todo_id: todo._id 
-                    }, function (err, todo) {
-                        if (err) {
-                            console.log(err);
-                        }
-
-                        console.log(todo);
+                    }, function () {
+                        $scope.todos.splice(index, 1);
                     });
                 }
             };

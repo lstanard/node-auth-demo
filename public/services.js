@@ -4,7 +4,10 @@ module.exports = function (app) {
         // API resources
         .factory('Todo', function ($resource) {
             return $resource('/api/todos/:todo_id',
-                { todo_id: '@todo_id' });
+                { todo_id: '@todo_id' },
+                {
+                    'update': { method: 'PUT' }
+                });
         })
 
         // User services
