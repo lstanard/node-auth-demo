@@ -26,7 +26,7 @@ module.exports = function (app) {
                     };
                     $scope.user = Login.save({}, data).$promise.then(function (result) {
                         if (result) {
-                            $rootScope.user = result.user.local;
+                            $rootScope.user = result.user;
                             $location.path('/todos');
                         } else {
                             $scope.error = 'Login failed.'
@@ -59,11 +59,21 @@ module.exports = function (app) {
                     $scope.errors.push('Please enter a password.');
                 }
 
-                if ($scope.email && $scope.password) {
+                if (!$scope.firstName) {
+                    $scope.errors.push('Please enter your first name.');
+                }
+
+                if (!$scope.lastName) {
+                    $scope.errors.push('Please enter your last name.');
+                }
+
+                if ($scope.email && $scope.password && $scope.firstName && $scope.lastName) {
                     // Create new user
                     $scope.user = Signup.save({}, {
                         email: $scope.email,
-                        password: $scope.password
+                        password: $scope.password,
+                        firstName: $scope.firstName,
+                        lastName: $scope.lastName
                     }).$promise.then(function () {
                         $location.path('/todos');
                     }, function (error) {

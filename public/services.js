@@ -36,7 +36,7 @@ module.exports = function (app) {
                     } else {
                         var user = User.query();
                         return user.$promise.then(function(data) {
-                            $rootScope.user = data.local;
+                            $rootScope.user = data;
                             return true;
                         }, function(error) {
                             return $q.reject('Not authenticated');
