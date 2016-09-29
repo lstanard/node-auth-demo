@@ -3,7 +3,7 @@ var _ = require('lodash');
 module.exports = function (app) {
     return app
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-            $scope.message = 'Todo Demo';
+            $scope.message = 'Welcome!';
         }])
         .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
             $scope.message = 'Login';
@@ -138,5 +138,24 @@ module.exports = function (app) {
                     });
                 }
             };
+
+            // Mark todo as complete
+            $scope.toggleComplete = function (todo) {
+                if (todo) {
+                    todo = Todo.update(
+                        { todo_id: todo._id },
+                        { 
+                            todo: todo.text,
+                            completed: !todo.completed
+                        },
+                        function () {
+                            // return todo.completed = todo
+                            // console.log(todo);
+                            return todo;
+                        }
+                    );
+
+                }
+            }
         }]);
 };

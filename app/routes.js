@@ -39,7 +39,8 @@ module.exports = function(app, passport) {
         Todo.findOneAndUpdate({
             _id: req.params.todo_id
         }, {
-            text: req.body.todo
+            text: req.body.todo,
+            completed: req.body.completed
         }, { new: true }, function (err, todo) {
             if (err) {
                 return res.status(500).json(err);

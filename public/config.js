@@ -51,6 +51,10 @@ module.exports = function (app) {
             $locationProvider.html5Mode(true);
         })
         .run(function($rootScope, $location) {
+            
+            // Set global application name
+            $rootScope.appTitle = 'Todo Demo';
+
             $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
                 if (rejection === 'Not authenticated') {
                     $location.path('/');

@@ -14,9 +14,10 @@
         <div ng-include="'templates/partials/error.html'"></div>
     </form>
 	<h2>All Todos</h2>
-	<ol class="list-group">
-		<li class="list-group-item" ng-repeat="todo in todos">
-            <span ng-hide="editing" ng-click="editing = true">{{todo.text}}</span>
+	<ol class="list-group todo-list">
+		<li class="list-group-item" ng-repeat="todo in todos" ng-class="todo.completed ? 'completed' : 'unfinished'">
+            <a href="#" toggle-class="completed" ng-click="toggleComplete(todo); $event.preventDefault();">Done</a>
+            <span class="text" ng-hide="editing" ng-click="editing = true">{{todo.text}}</span>
             <form ng-show="editing" ng-submit="update(todo); editing = false">
                 <div class="form-group">
                     <div class="input-group">

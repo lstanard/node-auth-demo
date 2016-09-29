@@ -8,4 +8,5 @@ var ngResource  = require('angular-resource');
 var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
 var config      = require('./config.js')(todoApp);
 var services    = require('./services.js')(todoApp);
+var directives  = require('./directives.js')(todoApp);
 var controllers = require('./controllers.js')(todoApp);

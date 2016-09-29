@@ -34110,12 +34110,6 @@
 
 	                }
 	            }
-
-	            $scope.todoClass = function (todo) {
-	                if (todo) {
-	                    return todo.completed ? 'completed' : 'unfinished';
-	                }
-	            }
 	        }]);
 	};
 
