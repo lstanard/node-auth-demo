@@ -1,5 +1,71 @@
 module.exports = function(app, passport) {
 
+    var Todo = require('./models/todo');
+
+    // =====================================
+    // TODOS ===============================
+    // =====================================
+    
+    // get all todos in the database
+    app.get('/api/todos', isLoggedIn, function(req, res) {
+        Todo.find({
+            subdomain: req.user._id 
+        }).exec(function(err, todos) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(todos);
+        });
+    });
+
+    // create new todo
+    app.post('/api/todos', isLoggedIn, function(req, res) {
+        Todo.create({
+            text: req.body.todo,
+            completed: false,
+            subdomain: req.user._id
+        }, function (err, todo) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(todo); // return new todo as JSON
+        });
+    });
+
+    // update a todo
+    app.put('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+        Todo.findOneAndUpdate({
+            _id: req.params.todo_id
+        }, {
+            text: req.body.todo,
+            completed: req.body.completed
+        }, { new: true }, function (err, todo) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(todo); // return updated todo as json
+        });
+    });
+
+    // delete a todo
+    app.delete('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+        Todo.remove({
+            _id: req.params.todo_id
+        }, function (err, obj) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            if (obj.result.n === 0)
+                res.send('Todo not found');
+
+            res.send(); // no reponse data
+        });
+    });
+
     // =====================================
     // LOGIN ===============================
     // =====================================
@@ -65,11 +131,8 @@ module.exports = function(app, passport) {
         res.sendfile('./public/index.html');
     });
 
-    // =====================================
-    // TODOS ===============================
-    // =====================================
-    // app.get('/api/todos', function(req, res) {
-    //     // Send todos as json
+    // app.get('*', function(req, res) {
+    //     res.sendfile('./public/index.html');
     // });
 
 };
