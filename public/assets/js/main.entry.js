@@ -44,27 +44,36 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var angular     = __webpack_require__(1);
-	var ngRoute     = __webpack_require__(3);
-	var ngResource  = __webpack_require__(5);
+	var css         = __webpack_require__(1);
+
+	var angular     = __webpack_require__(2);
+	var ngRoute     = __webpack_require__(4);
+	var ngResource  = __webpack_require__(6);
 
 	// Angular application
 	var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
-	var config      = __webpack_require__(7)(todoApp);
-	var services    = __webpack_require__(8)(todoApp);
-	var controllers = __webpack_require__(9)(todoApp);
+	var config      = __webpack_require__(8)(todoApp);
+	var services    = __webpack_require__(9)(todoApp);
+	var directives  = __webpack_require__(10)(todoApp);
+	var controllers = __webpack_require__(11)(todoApp);
 
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(2);
+	__webpack_require__(3);
 	module.exports = angular;
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	/**
@@ -31837,15 +31846,15 @@
 	!window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(4);
+	__webpack_require__(5);
 	module.exports = 'ngRoute';
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	/**
@@ -32920,15 +32929,15 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(6);
+	__webpack_require__(7);
 	module.exports = 'ngResource';
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	/**
@@ -33797,7 +33806,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
@@ -33853,6 +33862,10 @@
 	            $locationProvider.html5Mode(true);
 	        })
 	        .run(function($rootScope, $location) {
+	            
+	            // Set global application name
+	            $rootScope.appTitle = 'Todo Demo';
+
 	            $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
 	                if (rejection === 'Not authenticated') {
 	                    $location.path('/');
@@ -33863,7 +33876,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
@@ -33917,15 +33930,33 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        .directive('toggleClass', function () {
+	            return {
+	                restrict: 'A',
+	                link: function (scope, element, attrs) {
+	                    element.bind('click', function () {
+	                        console.log(element);
+	                    });
+	                }
+	            }
+	        });
+	};
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _ = __webpack_require__(10);
+	var _ = __webpack_require__(12);
 
 	module.exports = function (app) {
 	    return app
 	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-	            $scope.message = 'Todo Demo';
+	            $scope.message = 'Welcome!';
 	        }])
 	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
 	            $scope.message = 'Login';
@@ -34060,11 +34091,36 @@
 	                    });
 	                }
 	            };
+
+	            // Mark todo as complete
+	            $scope.toggleComplete = function (todo) {
+	                if (todo) {
+	                    todo = Todo.update(
+	                        { todo_id: todo._id },
+	                        { 
+	                            todo: todo.text,
+	                            completed: !todo.completed
+	                        },
+	                        function () {
+	                            // return todo.completed = todo
+	                            // console.log(todo);
+	                            return todo;
+	                        }
+	                    );
+
+	                }
+	            }
+
+	            $scope.todoClass = function (todo) {
+	                if (todo) {
+	                    return todo.completed ? 'completed' : 'unfinished';
+	                }
+	            }
 	        }]);
 	};
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -51013,10 +51069,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(11)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(13)(module)))
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {

@@ -1,3 +1,5 @@
+var css         = require('./scss/main.scss');
+
 var angular     = require('angular');
 var ngRoute     = require('angular-route');
 var ngResource  = require('angular-resource');
