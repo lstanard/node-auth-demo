@@ -100,7 +100,9 @@ module.exports = function(app, passport) {
     // =====================================
     app.get('/logout', function(req, res) {
         req.logout();
-        res.redirect('/');
+        res.status(200).json({
+            status: 'Logout successful'
+        });
     });
 
     // =====================================
@@ -111,7 +113,9 @@ module.exports = function(app, passport) {
     app.post('/signup',
         passport.authenticate('local-signup', {}),
         function (req, res) {
-            res.redirect('/profile');
+            res.status(200).json({
+                status: 'Signup successful'
+            });
         }
     );
 
