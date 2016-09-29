@@ -8,12 +8,14 @@ module.exports = function(app, passport) {
     
     // get all todos in the database
     app.get('/api/todos', isLoggedIn, function(req, res) {
-        Todo.find(function(err, todos) {
+        Todo.find({
+            subdomain: req.user._id 
+        }).exec(function(err, todos) {
             if (err) {
-                return res.status(500).send(err);
+                return res.status(500).json(err);
             }
 
-            res.json(todos); // return all todos in JSON format
+            res.json(todos);
         });
     });
 
@@ -21,13 +23,15 @@ module.exports = function(app, passport) {
     app.post('/api/todos', isLoggedIn, function(req, res) {
         Todo.create({
             text: req.body.todo,
-            done: false
+            completed: false,
+            subdomain: req.user._id
         }, function (err, todo) {
-            if (err)
-                res.send(err);
+            if (err) {
+                return res.status(500).json(err);
+            }
 
             res.json(todo); // return new todo as JSON
-        })
+        });
     });
 
     // update a todo
