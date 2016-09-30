@@ -18,7 +18,7 @@ module.exports = function (app) {
                                 completed: !$scope.todo.completed
                             },
                             function () {
-                                $scope.todos[index] = todo;'
+                                $scope.todos[index] = todo;
                                 elem.parent().toggleClass('completed');
                             }
                         );
