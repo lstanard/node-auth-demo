@@ -50,11 +50,13 @@
 	var ngRoute     = __webpack_require__(4);
 	var ngResource  = __webpack_require__(6);
 
+	var _ 			= __webpack_require__(12);
+
 	// Angular application
 	var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
 	var config      = __webpack_require__(8)(todoApp);
 	var services    = __webpack_require__(9)(todoApp);
-	var directives  = __webpack_require__(10)(todoApp);
+	var directives  = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./directives.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()))(todoApp);
 	var controllers = __webpack_require__(11)(todoApp);
 
 
@@ -33930,28 +33932,9 @@
 
 
 /***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-	        .directive('toggleClass', function () {
-	            return {
-	                restrict: 'A',
-	                link: function (scope, element, attrs) {
-	                    element.bind('click', function () {
-	                        console.log(element);
-	                    });
-	                }
-	            }
-	        });
-	};
-
-/***/ },
+/* 10 */,
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(12);
+/***/ function(module, exports) {
 
 	module.exports = function (app) {
 	    return app
@@ -34085,31 +34068,12 @@
 	                    var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
 
 	                    Todo.delete({
-	                        todo_id: todo._id 
+	                        todo_id: todo._id
 	                    }, function () {
 	                        $scope.todos.splice(index, 1);
 	                    });
 	                }
 	            };
-
-	            // Mark todo as complete
-	            $scope.toggleComplete = function (todo) {
-	                if (todo) {
-	                    todo = Todo.update(
-	                        { todo_id: todo._id },
-	                        { 
-	                            todo: todo.text,
-	                            completed: !todo.completed
-	                        },
-	                        function () {
-	                            // return todo.completed = todo
-	                            // console.log(todo);
-	                            return todo;
-	                        }
-	                    );
-
-	                }
-	            }
 	        }]);
 	};
 

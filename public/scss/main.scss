@@ -4,6 +4,9 @@ body {
 }
 
 .todo-list {
+	a {
+		text-decoration: none;
+	}
 
     li {
         padding: 15px;

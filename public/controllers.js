@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 module.exports = function (app) {
     return app
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
@@ -132,30 +130,11 @@ module.exports = function (app) {
                     var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
 
                     Todo.delete({
-                        todo_id: todo._id 
+                        todo_id: todo._id
                     }, function () {
                         $scope.todos.splice(index, 1);
                     });
                 }
             };
-
-            // Mark todo as complete
-            $scope.toggleComplete = function (todo) {
-                if (todo) {
-                    todo = Todo.update(
-                        { todo_id: todo._id },
-                        { 
-                            todo: todo.text,
-                            completed: !todo.completed
-                        },
-                        function () {
-                            // return todo.completed = todo
-                            // console.log(todo);
-                            return todo;
-                        }
-                    );
-
-                }
-            }
         }]);
 };

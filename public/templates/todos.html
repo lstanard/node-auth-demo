@@ -15,20 +15,6 @@
     </form>
 	<h2>All Todos</h2>
 	<ol class="list-group todo-list">
-		<li class="list-group-item" ng-repeat="todo in todos" ng-class="todo.completed ? 'completed' : 'unfinished'">
-            <a href="#" toggle-class="completed" ng-click="toggleComplete(todo); $event.preventDefault();">Done</a>
-            <span class="text" ng-hide="editing" ng-click="editing = true">{{todo.text}}</span>
-            <form ng-show="editing" ng-submit="update(todo); editing = false">
-                <div class="form-group">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="todo" ng-model="todo.text">
-                        <span class="input-group-btn">
-                            <button type="submit" class="btn btn-success">Save</button>
-                        </span>
-                    </div>
-                </div>
-            </form>
-            <a href="#" ng-click="delete(todo); $event.preventDefault();"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
-        </li>
+        <div ng-include="'templates/partials/todo.html'"></div>
 	</ol>
 </div>
