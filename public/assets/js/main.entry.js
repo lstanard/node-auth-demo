@@ -44,20 +44,19 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var css         = __webpack_require__(1);
+	var css         	= __webpack_require__(1);
 
-	var angular     = __webpack_require__(2);
-	var ngRoute     = __webpack_require__(4);
-	var ngResource  = __webpack_require__(6);
-
-	var _ 			= __webpack_require__(12);
+	var angular     	= __webpack_require__(2);
+	var ngRoute     	= __webpack_require__(4);
+	var ngResource  	= __webpack_require__(6);
+	var _ 				= __webpack_require__(8);
 
 	// Angular application
-	var todoApp     = angular.module('todo', ['ngRoute', 'ngResource']);
-	var config      = __webpack_require__(8)(todoApp);
-	var services    = __webpack_require__(9)(todoApp);
-	var directives  = __webpack_require__(10)(todoApp);
-	var controllers = __webpack_require__(11)(todoApp);
+	var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource']);
+	var config      	= __webpack_require__(10)(todoApp);
+	var services    	= __webpack_require__(11)(todoApp);
+	var directives  	= __webpack_require__(12)(todoApp);
+	var controllers 	= __webpack_require__(13)(todoApp);
 
 
 /***/ },
@@ -33809,309 +33808,6 @@
 
 /***/ },
 /* 8 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-	        // configure routes
-	        .config(function($routeProvider, $locationProvider) {
-	            $routeProvider
-	                // route for the home page
-	                .when('/', {
-	                    templateUrl: 'templates/home.html',
-	                    controller: 'mainController'
-	                })
-	                // route for the login page
-	                .when('/login', {
-	                    templateUrl: 'templates/login.html',
-	                    controller: 'loginController'
-	                })
-	                // route for the logout
-	                .when('/logout', {
-	                    templateUrl: 'templates/logout.html',
-	                    controller: 'logoutController',
-	                })
-	                // route for the signup page
-	                .when('/signup', {
-	                    templateUrl: 'templates/signup.html',
-	                    controller: 'signupController'
-	                })
-	                // route for profile page
-	                .when('/profile', {
-	                    templateUrl: 'templates/profile.html',
-	                    controller: 'profileController',
-	                    resolve: {
-	                        'auth': function(Authentication) {
-	                            return Authentication.authenticate();
-	                        }
-	                    }
-	                })
-	                // route for todos page
-	                .when('/todos', {
-	                    templateUrl: 'templates/todos.html',
-	                    controller: 'todoController',
-	                    resolve: {
-	                        'auth': function(Authentication) {
-	                            return Authentication.authenticate();
-	                        }
-	                    }
-	                })
-	                .otherwise({
-	                    redirectTo: '/'
-	                });
-
-	            // use the HTML5 History API
-	            $locationProvider.html5Mode(true);
-	        })
-	        .run(function($rootScope, $location) {
-	            
-	            // Set global application name
-	            $rootScope.appTitle = 'Todo Demo';
-
-	            $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-	                if (rejection === 'Not authenticated') {
-	                    $location.path('/');
-	                }
-	            });
-	        });
-	};
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-
-	        // API resources
-	        .factory('Todo', function ($resource) {
-	            return $resource('/api/todos/:todo_id',
-	                { todo_id: '@todo_id' },
-	                {
-	                    'update': { method: 'PUT' }
-	                });
-	        })
-
-	        // User services
-	        .factory('Login', function ($resource) {
-	            return $resource('/login');
-	        })
-	        .factory('Logout', function ($resource) {
-	            return $resource('/logout');
-	        })
-	        .factory('Signup', function ($resource) {
-	            return $resource('/signup');
-	        })
-	        .factory('User', function ($resource) {
-	            return $resource('/user', {}, {
-	                'query': {
-	                    method: 'GET',
-	                    isArray: false
-	                }
-	            });
-	        })
-	        .factory('Authentication', function ($q, $rootScope, User) {
-	            return {
-	                authenticate: function () {
-	                    if ($rootScope.user) {
-	                        return $q.resolve($rootScope.user);
-	                    } else {
-	                        var user = User.query();
-	                        return user.$promise.then(function(data) {
-	                            $rootScope.user = data;
-	                            return true;
-	                        }, function(error) {
-	                            return $q.reject('Not authenticated');
-	                        });
-	                    }
-	                }
-	            }
-	        });
-	};
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-	        .directive('toggleComplete', function (Todo) {
-	            return {
-	                restrict: 'A',
-	                link: function (scope, elem, attrs) {
-	                    elem.bind('click', function (event) {
-	                        event.preventDefault();
-
-	                        $scope = scope;
-
-	                        var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: $scope.todo._id }));
-
-	                        var todo = Todo.update(
-	                            { todo_id: $scope.todo._id },
-	                            {
-	                                todo: $scope.todo.text,
-	                                completed: !$scope.todo.completed
-	                            },
-	                            function () {
-	                                $scope.todos[index] = todo;
-	                                elem.parent().toggleClass('completed');
-	                            }
-	                        );
-	                    });
-	                }
-	            }
-	        });
-	};
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-	            $scope.message = 'Welcome!';
-	        }])
-	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
-	            $scope.message = 'Login';
-
-	            $scope.submit = function() {
-	                $scope.errors = [];
-
-	                if (!$scope.email) {
-	                    $scope.errors.push('Please enter a valid email.');
-	                }
-
-	                if (!$scope.password) {
-	                    $scope.errors.push('Please enter a password.');
-	                }
-
-	                if ($scope.email && $scope.password) {
-	                    var data = {
-	                        email: $scope.email,
-	                        password: $scope.password
-	                    };
-	                    $scope.user = Login.save({}, data).$promise.then(function (result) {
-	                        if (result) {
-	                            $rootScope.user = result.user;
-	                            $location.path('/todos');
-	                        } else {
-	                            $scope.error = 'Login failed.'
-	                        }
-	                    }, function (error) {
-	                        console.log(error);
-	                    });
-	                }
-	            };
-	        }])
-	        .controller('logoutController', ['$scope', '$rootScope', '$location', 'Logout', function ($scope, $rootScope, $location, Logout) {
-	            Logout.get().$promise.then(function() {
-	                $rootScope.user = '';
-	                $location.path('/');
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }])
-	        .controller('signupController', ['$scope', '$location', 'Signup', function ($scope, $location, Signup) {
-	            $scope.message = 'Signup';
-
-	            $scope.submit = function () {
-	                $scope.errors = [];
-
-	                if (!$scope.email) {
-	                    $scope.errors.push('Please enter a valid email.');
-	                }
-
-	                if (!$scope.password) {
-	                    $scope.errors.push('Please enter a password.');
-	                }
-
-	                if (!$scope.firstName) {
-	                    $scope.errors.push('Please enter your first name.');
-	                }
-
-	                if (!$scope.lastName) {
-	                    $scope.errors.push('Please enter your last name.');
-	                }
-
-	                if ($scope.email && $scope.password && $scope.firstName && $scope.lastName) {
-	                    // Create new user
-	                    $scope.user = Signup.save({}, {
-	                        email: $scope.email,
-	                        password: $scope.password,
-	                        firstName: $scope.firstName,
-	                        lastName: $scope.lastName
-	                    }).$promise.then(function () {
-	                        $location.path('/todos');
-	                    }, function (error) {
-	                        $scope.error = 'Signup failed';
-	                    });
-	                }
-	            };
-	        }])
-	        .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
-	            $scope.message = 'Your Profile';
-	            $scope.user = $rootScope.user;
-	        }])
-	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-	            $scope.message = 'Your Todos';
-	            $scope.user = $rootScope.user;
-
-	            // Get all todos
-	            $scope.todos = Todo.query();
-
-	            // Save new todo
-	            $scope.submit = function () {
-	                $scope.errors = [];
-
-	                if (!$scope.todo) {
-	                    $scope.errors.push('You need to enter something to do!');
-	                }
-
-	                if ($scope.todo) {
-	                    var todo = Todo.save({}, {
-	                        todo: $scope.todo
-	                    }).$promise.then(function(result) {
-	                        $scope.todos.push(result);
-	                        $scope.todo = $scope.errors = '';
-	                    }, function (error) {
-	                        console.log(error);
-	                        $scope.error = 'Something went wrong';
-	                    });
-	                }
-	            };
-
-	            // Update/edit a todo
-	            $scope.update = function (todo) {
-	                if (todo) {
-	                    Todo.update(
-	                        // Find todo by id
-	                        { todo_id: todo._id },
-	                        // Properties to update
-	                        { todo: todo.text }
-	                    );
-	                }
-	            };
-
-	            // Delete todo
-	            $scope.delete = function (todo) {
-	                if (todo) {
-	                    var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
-
-	                    Todo.delete({
-	                        todo_id: todo._id
-	                    }, function () {
-	                        $scope.todos.splice(index, 1);
-	                    });
-	                }
-	            };
-	        }]);
-	};
-
-/***/ },
-/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -51060,10 +50756,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(13)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(9)(module)))
 
 /***/ },
-/* 13 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -51077,6 +50773,309 @@
 		return module;
 	}
 
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        // configure routes
+	        .config(function($routeProvider, $locationProvider) {
+	            $routeProvider
+	                // route for the home page
+	                .when('/', {
+	                    templateUrl: 'templates/home.html',
+	                    controller: 'mainController'
+	                })
+	                // route for the login page
+	                .when('/login', {
+	                    templateUrl: 'templates/login.html',
+	                    controller: 'loginController'
+	                })
+	                // route for the logout
+	                .when('/logout', {
+	                    templateUrl: 'templates/logout.html',
+	                    controller: 'logoutController',
+	                })
+	                // route for the signup page
+	                .when('/signup', {
+	                    templateUrl: 'templates/signup.html',
+	                    controller: 'signupController'
+	                })
+	                // route for profile page
+	                .when('/profile', {
+	                    templateUrl: 'templates/profile.html',
+	                    controller: 'profileController',
+	                    resolve: {
+	                        'auth': function(Authentication) {
+	                            return Authentication.authenticate();
+	                        }
+	                    }
+	                })
+	                // route for todos page
+	                .when('/todos', {
+	                    templateUrl: 'templates/todos.html',
+	                    controller: 'todoController',
+	                    resolve: {
+	                        'auth': function(Authentication) {
+	                            return Authentication.authenticate();
+	                        }
+	                    }
+	                })
+	                .otherwise({
+	                    redirectTo: '/'
+	                });
+
+	            // use the HTML5 History API
+	            $locationProvider.html5Mode(true);
+	        })
+	        .run(function($rootScope, $location) {
+
+	            // Set global application name
+	            $rootScope.appTitle = 'todo\'r';
+
+	            $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
+	                if (rejection === 'Not authenticated') {
+	                    $location.path('/');
+	                }
+	            });
+	        });
+	};
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+
+	        // API resources
+	        .factory('Todo', function ($resource) {
+	            return $resource('/api/todos/:todo_id',
+	                { todo_id: '@todo_id' },
+	                {
+	                    'update': { method: 'PUT' }
+	                });
+	        })
+
+	        // User services
+	        .factory('Login', function ($resource) {
+	            return $resource('/login');
+	        })
+	        .factory('Logout', function ($resource) {
+	            return $resource('/logout');
+	        })
+	        .factory('Signup', function ($resource) {
+	            return $resource('/signup');
+	        })
+	        .factory('User', function ($resource) {
+	            return $resource('/user', {}, {
+	                'query': {
+	                    method: 'GET',
+	                    isArray: false
+	                }
+	            });
+	        })
+	        .factory('Authentication', function ($q, $rootScope, User) {
+	            return {
+	                authenticate: function () {
+	                    if ($rootScope.user) {
+	                        return $q.resolve($rootScope.user);
+	                    } else {
+	                        var user = User.query();
+	                        return user.$promise.then(function(data) {
+	                            $rootScope.user = data;
+	                            return true;
+	                        }, function(error) {
+	                            return $q.reject('Not authenticated');
+	                        });
+	                    }
+	                }
+	            }
+	        });
+	};
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        .directive('toggleComplete', function (Todo) {
+	            return {
+	                restrict: 'A',
+	                link: function (scope, elem, attrs) {
+	                    elem.bind('click', function (event) {
+	                        event.preventDefault();
+
+	                        $scope = scope;
+
+	                        var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: $scope.todo._id }));
+
+	                        var todo = Todo.update(
+	                            { todo_id: $scope.todo._id },
+	                            {
+	                                todo: $scope.todo.text,
+	                                completed: !$scope.todo.completed
+	                            },
+	                            function () {
+	                                $scope.todos[index] = todo;
+	                                elem.parent().toggleClass('completed');
+	                            }
+	                        );
+	                    });
+	                }
+	            }
+	        });
+	};
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
+	            $scope.message = 'Welcome!';
+	        }])
+	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
+	            $scope.message = 'Login';
+
+	            $scope.submit = function() {
+	                $scope.errors = [];
+
+	                if (!$scope.email) {
+	                    $scope.errors.push('Please enter a valid email.');
+	                }
+
+	                if (!$scope.password) {
+	                    $scope.errors.push('Please enter a password.');
+	                }
+
+	                if ($scope.email && $scope.password) {
+	                    var data = {
+	                        email: $scope.email,
+	                        password: $scope.password
+	                    };
+	                    $scope.user = Login.save({}, data).$promise.then(function (result) {
+	                        if (result) {
+	                            $rootScope.user = result.user;
+	                            $location.path('/todos');
+	                        } else {
+	                            $scope.error = 'Login failed.'
+	                        }
+	                    }, function (error) {
+	                        console.log(error);
+	                    });
+	                }
+	            };
+	        }])
+	        .controller('logoutController', ['$scope', '$rootScope', '$location', 'Logout', function ($scope, $rootScope, $location, Logout) {
+	            Logout.get().$promise.then(function() {
+	                $rootScope.user = '';
+	                $location.path('/');
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }])
+	        .controller('signupController', ['$scope', '$location', 'Signup', function ($scope, $location, Signup) {
+	            $scope.message = 'Signup';
+
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.email) {
+	                    $scope.errors.push('Please enter a valid email.');
+	                }
+
+	                if (!$scope.password) {
+	                    $scope.errors.push('Please enter a password.');
+	                }
+
+	                if (!$scope.firstName) {
+	                    $scope.errors.push('Please enter your first name.');
+	                }
+
+	                if (!$scope.lastName) {
+	                    $scope.errors.push('Please enter your last name.');
+	                }
+
+	                if ($scope.email && $scope.password && $scope.firstName && $scope.lastName) {
+	                    // Create new user
+	                    $scope.user = Signup.save({}, {
+	                        email: $scope.email,
+	                        password: $scope.password,
+	                        firstName: $scope.firstName,
+	                        lastName: $scope.lastName
+	                    }).$promise.then(function () {
+	                        $location.path('/todos');
+	                    }, function (error) {
+	                        $scope.error = 'Signup failed';
+	                    });
+	                }
+	            };
+	        }])
+	        .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+	            $scope.message = 'Your Profile';
+	            $scope.user = $rootScope.user;
+	        }])
+	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
+	            $scope.message = 'Your Todos';
+	            $scope.user = $rootScope.user;
+
+	            // Get all todos
+	            $scope.todos = Todo.query();
+
+	            // Save new todo
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.todo) {
+	                    $scope.errors.push('You need to enter something to do!');
+	                }
+
+	                if ($scope.todo) {
+	                    var todo = Todo.save({}, {
+	                        todo: $scope.todo
+	                    }).$promise.then(function(result) {
+	                        $scope.todos.push(result);
+	                        $scope.todo = $scope.errors = '';
+	                    }, function (error) {
+	                        console.log(error);
+	                        $scope.error = 'Something went wrong';
+	                    });
+	                }
+	            };
+
+	            // Update/edit a todo
+	            $scope.update = function (todo) {
+	                if (todo) {
+	                    Todo.update(
+	                        // Find todo by id
+	                        { todo_id: todo._id },
+	                        // Properties to update
+	                        { todo: todo.text }
+	                    );
+	                }
+	            };
+
+	            // Delete todo
+	            $scope.delete = function (todo) {
+	                if (todo) {
+	                    var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
+
+	                    Todo.delete({
+	                        todo_id: todo._id
+	                    }, function () {
+	                        $scope.todos.splice(index, 1);
+	                    });
+	                }
+	            };
+	        }]);
+	};
 
 /***/ }
 /******/ ]);

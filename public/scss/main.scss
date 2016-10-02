@@ -1,12 +1,131 @@
+@import 'base/normalize';
+
+$primary:   #466A80;
+$hint:      #e4e7e8;
+$slate:     #343738;
+$bubblegum: #FF6B7E;
+$sky:       #5BBAE3;
+
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
 body {
-    margin: 0;
-    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1, p {
+    color: $slate;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.container {
+    align-items: center;
+    display: flex;
+
+    padding: 0 30px;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.button {
+    display: inline-block;
+    background-color: $primary;
+    border-radius: 2px;
+    color: #fff;
+    border: 0;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .1s;
+    width: auto;
+
+    &:hover {
+        background-color: $bubblegum;
+    }
+}
+
+.header {
+    padding: 15px 0 30px 0;
+
+    .container {
+        border-bottom: 1px solid $hint;
+        justify-content: space-between;
+    }
+
+    .app-name {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 36px;
+        color: $sky;
+        letter-spacing: -1.8px;
+        text-decoration: none;
+
+        margin: 20px 0;
+    }
+
+    .nav {
+        list-style: none;
+
+        li {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        a {
+            color: $slate;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.1s;
+
+            &:hover {
+                color: $bubblegum;
+            }
+        }
+    }
+}
+
+.greeting {
+    display: block;
+    padding: 45px 0;
+    margin: 0 auto;
+    max-width: 550px;
+    text-align: center;
+
+    h1 {
+        font-size: 56px;
+        line-height: 1;
+        margin: 15px 0;
+    }
+
+    p {
+        font-size: 18px;
+        line-height: 1.6;
+        margin: 0 0 5px;
+    }
+
+    p:last-child {
+        margin-bottom: 60px;
+    }
 }
 
 .todo-list {
-	a {
-		text-decoration: none;
-	}
+    a {
+        text-decoration: none;
+    }
 
     li {
         padding: 15px;

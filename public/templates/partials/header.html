@@ -1,25 +1,16 @@
-<header>
-    <div class="container">            
-        <nav class="navbar navbar-light">
-            <a href="/" class="navbar-brand">{{appTitle}}</a>
-            <ul class="nav navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-                <li class="nav-item" ng-if="user">
-                    <a class="nav-link" href="/todos">Todos</a>
-                </li>
-                <li class="nav-item" ng-if="user">
-                    <a class="nav-link" href="/profile">Profile</a>
-                </li>
-                <li class="nav-item" ng-if="!user">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item" ng-if="user">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-            </ul>
-        </nav>
-        <p ng-if="user">Howdy, {{user.name.first}}!</p>
-    </div>
-</header>
+<div class="header">
+    <header>
+        <div class="container">
+            <a href="/" class="app-name">{{appTitle}}</a>
+            <nav>
+                <ul class="nav">
+                    <li ng-if="!user"><a class="nav-link" href="/login">Login</a></li>
+                    <li ng-if="!user"><a class="nav-link" href="/signup">Signup</a></li>
+                    <li ng-if="user"><a class="nav-link" href="/todos">Todos</a></li>
+                    <li ng-if="user"><a class="nav-link" href="/profile">Profile</a></li>
+                    <li ng-if="user"><a class="nav-link" href="/logout">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+</div>

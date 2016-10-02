@@ -1,23 +1,33 @@
 var path 				= require('path');
-var ExtractTextPlugin 	= require("extract-text-webpack-plugin");
+var extractTextPlugin 	= require('extract-text-webpack-plugin');
+var autoprefixer 		= require('autoprefixer');
+
+// Plugins
+var plugins = [
+	new extractTextPlugin('../css/[name].css', { allChunks: true })
+]
+
+// Loaders
+var loaders = [
+	{
+		test: /\.scss$/,
+		loader: extractTextPlugin.extract('style', 'css!sass!postcss')
+	}
+]
 
 module.exports = {
 	entry: {
 		"main": "./public/main.js"
 	},
-	plugins: [
-		new ExtractTextPlugin('../css/[name].css', { allChunks: true })
-	],
+	plugins: plugins,
 	output: {
 		path: __dirname + '/public/assets/js/',
 		filename: "[name].entry.js"
 	},
 	module: {
-		loaders: [
-			{
-				test: /\.scss$/,
-				loader: ExtractTextPlugin.extract('style', 'css!sass')
-			}
-		]
+		loaders: loaders
+	},
+	postcss: function () {
+		return [autoprefixer];
 	}
 };

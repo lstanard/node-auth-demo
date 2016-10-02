@@ -1,5 +1,8 @@
 <div ng-include="'templates/partials/header.html'"></div>
 <div class="container">
+    <p ng-if="user">Howdy, {{user.name.first}}!</p>
+</div>
+<div class="container">
 	<h3>Add Todo</h3>
 	<form ng-submit="submit()">
         <div class="form-group">
