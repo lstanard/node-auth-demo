@@ -5,11 +5,11 @@ module.exports = function(app, passport) {
     // =====================================
     // TODOS ===============================
     // =====================================
-    
+
     // get all todos in the database
     app.get('/api/todos', isLoggedIn, function(req, res) {
         Todo.find({
-            subdomain: req.user._id 
+            subdomain: req.user._id
         }).exec(function(err, todos) {
             if (err) {
                 return res.status(500).json(err);
@@ -134,10 +134,6 @@ module.exports = function(app, passport) {
     app.use('/', function(req, res) {
         res.sendfile('./public/index.html');
     });
-
-    // app.get('*', function(req, res) {
-    //     res.sendfile('./public/index.html');
-    // });
 
 };
 

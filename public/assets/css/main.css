@@ -379,11 +379,18 @@ h1, p {
 p {
   font-size: 16px;
   line-height: 1.4; }
+  p a {
+    color: #466A80;
+    text-decoration: none;
+    -webkit-transition: color .1s;
+    transition: color .1s; }
+    p a:hover {
+      color: #5BBAE3; }
 
 .container {
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -409,15 +416,17 @@ p {
   transition: background-color .1s;
   width: auto; }
   .button:hover {
-    background-color: #FF6B7E; }
+    background-color: #FF6B7E;
+    cursor: pointer;
+    color: #fff; }
 
 .header {
-  padding: 15px 0 30px 0; }
+  border-bottom: 1px solid #e4e7e8;
+  padding: 15px 0; }
   .header .container {
-    border-bottom: 1px solid #e4e7e8;
     -webkit-box-pack: justify;
-        -ms-flex-pack: justify;
-            justify-content: space-between; }
+    -ms-flex-pack: justify;
+    justify-content: space-between; }
   .header .app-name {
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
@@ -425,7 +434,7 @@ p {
     color: #5BBAE3;
     letter-spacing: -1.8px;
     text-decoration: none;
-    margin: 20px 0; }
+    margin: 15px 0; }
   .header .nav {
     list-style: none; }
     .header .nav li {
@@ -440,6 +449,25 @@ p {
       .header .nav a:hover {
         color: #FF6B7E; }
 
+.inner-wrap {
+  margin: 0 0 120px;
+  padding: 0 0 60px; }
+
+.section.signup form, .section.login form {
+  border: 1px solid #343738;
+  padding: 45px 45px 30px 45px;
+  margin: 0 auto;
+  max-width: 550px; }
+
+.user-header {
+  background-color: #f5f5f6;
+  padding: 15px 0;
+  margin: 0 0 30px; }
+  .user-header .container {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between; }
+
 .greeting {
   display: block;
   padding: 45px 0;
@@ -453,16 +481,41 @@ p {
   .greeting p {
     font-size: 18px;
     line-height: 1.6;
-    margin: 0 0 5px; }
-  .greeting p:last-child {
-    margin-bottom: 60px; }
+    margin: 0 0 15px; }
 
-.todo-list a {
-  text-decoration: none; }
+.todo-wrap h2 {
+  width: 100%; }
 
-.todo-list li {
-  padding: 15px; }
+.todo-wrap .form-wrap {
+  width: 25%; }
 
-.todo-list li.completed span.text {
-  opacity: 0.5;
-  text-decoration: line-through; }
+.todo-wrap .todo-list {
+  list-style: none;
+  width: 75%; }
+  .todo-wrap .todo-list a {
+    text-decoration: none; }
+  .todo-wrap .todo-list li {
+    padding: 15px; }
+  .todo-wrap .todo-list li.completed span.text {
+    opacity: 0.5;
+    text-decoration: line-through; }
+
+.form-wrap {
+  text-align: center;
+  width: 100%; }
+  .form-wrap .form-group {
+    position: relative; }
+    .form-wrap .form-group label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #b3b7b8;
+      position: absolute;
+      margin: 10px 15px; }
+    .form-wrap .form-group input {
+      border: 1px solid #e4e7e8;
+      border-radius: 2px;
+      margin: 0 0 15px;
+      padding: 40px 15px 15px;
+      width: 100%; }
+    .form-wrap .form-group button {
+      cursor: pointer; }

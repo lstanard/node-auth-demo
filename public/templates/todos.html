@@ -1,23 +1,30 @@
 <div ng-include="'templates/partials/header.html'"></div>
-<div class="container">
-    <p ng-if="user">Howdy, {{user.name.first}}!</p>
-</div>
-<div class="container">
-	<h3>Add Todo</h3>
-	<form ng-submit="submit()">
-        <div class="form-group">
-            <label>What do you need to do?</label>
-            <div class="input-group">
-                <input type="text" class="form-control" name="todo" ng-model="todo">
-                <span class="input-group-btn">
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </span>
-            </div>
+<div class="inner-wrap section todos">
+    <div class="user-header">
+        <div class="container">
+            <p ng-if="user">Howdy, {{user.name.first}}!</p>
         </div>
-        <div ng-include="'templates/partials/error.html'"></div>
-    </form>
-	<h2>All Todos</h2>
-	<ol class="list-group todo-list">
-        <div ng-include="'templates/partials/todo.html'"></div>
-	</ol>
+    </div>
+    <div class="todo-wrap">
+        <div class="container">
+            <div class="form-wrap">
+                <h3>Add Todo</h3>
+                <form ng-submit="submit()">
+                    <div class="form-group">
+                        <label>What do you need to do?</label>
+                        <div class="input-group">
+                            <input type="text" name="todo" ng-model="todo">
+                            <span class="input-group-btn">
+                                <button type="submit" class="button">Add</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div ng-include="'templates/partials/error.html'"></div>
+                </form>
+            </div>
+            <ol class="todo-list">
+                <div ng-include="'templates/partials/todo.html'"></div>
+            </ol>
+        </div>
+    </div>
 </div>

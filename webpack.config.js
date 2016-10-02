@@ -1,10 +1,12 @@
 var path 				= require('path');
 var extractTextPlugin 	= require('extract-text-webpack-plugin');
 var autoprefixer 		= require('autoprefixer');
+var liveReloadPlugin 	= require('webpack-livereload-plugin');
 
 // Plugins
 var plugins = [
-	new extractTextPlugin('../css/[name].css', { allChunks: true })
+	new extractTextPlugin('../css/[name].css', { allChunks: true }),
+	new liveReloadPlugin({ appendScriptTag: true })
 ]
 
 // Loaders
