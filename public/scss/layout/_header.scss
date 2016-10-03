@@ -1,0 +1,45 @@
+.header {
+    border-bottom: 1px solid $hint;
+    padding: 15px 0;
+
+    .container {
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .app-name {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        font-size: 36px;
+        color: $sky;
+        letter-spacing: -1.8px;
+        text-decoration: none;
+
+        margin: 15px 0;
+    }
+
+    .nav {
+        list-style: none;
+
+        li {
+            display: inline-block;
+            margin: 0 15px;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        a {
+            color: $slate;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: color 0.1s;
+
+            &:hover {
+                color: $bubblegum;
+            }
+        }
+    }
+}

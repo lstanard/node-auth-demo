@@ -1,0 +1,33 @@
+// Forms
+
+.form-wrap {
+    text-align: center;
+    width: 100%;
+
+    .form-group {
+        position: relative;
+
+        label {
+            font-size: 14px;
+            font-weight: 700;
+            color: lighten($slate, 50%);
+            position: absolute;
+            margin: 10px 15px;
+        }
+    }
+
+    input {
+        border: none;
+        border-bottom: 2px solid $hint;
+        margin: 0 0 15px;
+        outline: none;
+        padding: 40px 15px 15px;
+        width: 100%;
+    }
+
+    .button {
+        cursor: pointer;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+}

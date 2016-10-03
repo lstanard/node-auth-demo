@@ -1,0 +1,12 @@
+.page-login,
+.page-signup {
+    form {
+        padding: 30px;
+        margin: 0 auto;
+        max-width: 550px;
+    }
+
+    input {
+        border-color: $slate;
+    }
+}

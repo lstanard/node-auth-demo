@@ -1,0 +1,32 @@
+h1, p {
+    color: $slate;
+}
+
+h1 {
+    font-size: 56px;
+    line-height: 1;
+    margin: 15px 0;
+}
+
+h3 {
+    font-size: 28px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.4;
+
+    strong {
+        font-weight: 700;
+    }
+
+    a {
+        color: $primary;
+        text-decoration: none;
+        transition: color .1s;
+
+        &:hover {
+            color: $sky;
+        }
+    }
+}
