@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "angular": "^1.5.8",
+    "angular-animate": "^1.5.8",
     "angular-resource": "^1.5.8",
     "angular-route": "^1.5.8",
     "autoprefixer": "^6.5.0",
@@ -35,7 +36,6 @@
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.2",
-    "webpack-livereload-plugin": "^0.8.2",
     "webpack-notifier": "^1.4.1"
   }
 }
