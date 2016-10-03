@@ -9,6 +9,6 @@ var todoSchema = mongoose.Schema({
         type: ObjectId,
         ref: 'User'
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Todo', todoSchema);
