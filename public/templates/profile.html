@@ -1,12 +1,8 @@
-<div ng-include="'templates/partials/header.html'"></div>
-<div class="inner-wrap section profile">
-	<div class="user-header">
+<div class="inner-wrap">
+    <div class="user-header" ng-include="'templates/partials/user-header.html'"></div>
+    <div class="inner-body">
         <div class="container">
-            <p ng-if="user">Howdy, {{user.name.first}}!</p>
-            <a href="#" class="button">Edit profile</a>
+            <p>Name: {{user.name.first}} {{user.name.last}}</p>
         </div>
     </div>
-	<div class="container">
-		<p>Name: {{user.name.first}} {{user.name.last}}</p>
-	</div>
 </div>

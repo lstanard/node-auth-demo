@@ -376,57 +376,61 @@ body {
 h1, p {
   color: #343738; }
 
+h1 {
+  font-size: 56px;
+  line-height: 1;
+  margin: 15px 0; }
+
+h3 {
+  font-size: 28px; }
+
 p {
   font-size: 16px;
   line-height: 1.4; }
+  p strong {
+    font-weight: 700; }
   p a {
     color: #466A80;
     text-decoration: none;
-    -webkit-transition: color .1s;
     transition: color .1s; }
     p a:hover {
       color: #5BBAE3; }
 
+/* slide in from the bottom */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px); }
+  to {
+    opacity: 1.0;
+    transform: translateY(0); } }
+
+@keyframes slideOutDown {
+  from {
+    opacity: 1.0;
+    transform: translateY(0); }
+  to {
+    opacity: 0;
+    transform: translateY(45px); } }
+
 .container {
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
   padding: 0 30px;
   position: relative;
-  max-width: 1200px;
+  max-width: 960px;
   margin: 0 auto;
   width: 100%; }
 
-.button {
-  display: inline-block;
-  background-color: #466A80;
-  border-radius: 2px;
-  color: #fff;
-  border: 0;
-  padding: 10px 20px;
-  margin: 0 10px;
-  font-size: 18px;
-  font-weight: 400;
-  text-align: center;
-  text-decoration: none;
-  -webkit-transition: background-color .1s;
-  transition: background-color .1s;
-  width: auto; }
-  .button:hover {
-    background-color: #FF6B7E;
-    cursor: pointer;
-    color: #fff; }
+.inner-wrap {
+  margin: 0 0 120px;
+  padding: 0 0 60px; }
 
 .header {
   border-bottom: 1px solid #e4e7e8;
   padding: 15px 0; }
   .header .container {
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between; }
+    justify-content: space-between;
+    align-items: center; }
   .header .app-name {
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
@@ -440,65 +444,16 @@ p {
     .header .nav li {
       display: inline-block;
       margin: 0 15px; }
+      .header .nav li:last-child {
+        margin-right: 0; }
     .header .nav a {
       color: #343738;
       font-weight: 700;
       text-decoration: none;
-      -webkit-transition: color 0.1s;
+      text-transform: uppercase;
       transition: color 0.1s; }
       .header .nav a:hover {
         color: #FF6B7E; }
-
-.inner-wrap {
-  margin: 0 0 120px;
-  padding: 0 0 60px; }
-
-.section.signup form, .section.login form {
-  border: 1px solid #343738;
-  padding: 45px 45px 30px 45px;
-  margin: 0 auto;
-  max-width: 550px; }
-
-.user-header {
-  background-color: #f5f5f6;
-  padding: 15px 0;
-  margin: 0 0 30px; }
-  .user-header .container {
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between; }
-
-.greeting {
-  display: block;
-  padding: 45px 0;
-  margin: 0 auto;
-  max-width: 550px;
-  text-align: center; }
-  .greeting h1 {
-    font-size: 56px;
-    line-height: 1;
-    margin: 15px 0; }
-  .greeting p {
-    font-size: 18px;
-    line-height: 1.6;
-    margin: 0 0 15px; }
-
-.todo-wrap h2 {
-  width: 100%; }
-
-.todo-wrap .form-wrap {
-  width: 25%; }
-
-.todo-wrap .todo-list {
-  list-style: none;
-  width: 75%; }
-  .todo-wrap .todo-list a {
-    text-decoration: none; }
-  .todo-wrap .todo-list li {
-    padding: 15px; }
-  .todo-wrap .todo-list li.completed span.text {
-    opacity: 0.5;
-    text-decoration: line-through; }
 
 .form-wrap {
   text-align: center;
@@ -511,11 +466,132 @@ p {
       color: #b3b7b8;
       position: absolute;
       margin: 10px 15px; }
-    .form-wrap .form-group input {
-      border: 1px solid #e4e7e8;
-      border-radius: 2px;
-      margin: 0 0 15px;
-      padding: 40px 15px 15px;
-      width: 100%; }
-    .form-wrap .form-group button {
-      cursor: pointer; }
+  .form-wrap input {
+    border: none;
+    border-bottom: 2px solid #e4e7e8;
+    margin: 0 0 15px;
+    outline: none;
+    padding: 40px 15px 15px;
+    width: 100%; }
+  .form-wrap .button {
+    cursor: pointer;
+    margin-top: 15px;
+    margin-bottom: 15px; }
+
+.page-login form,
+.page-signup form {
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 550px; }
+
+.page-login input,
+.page-signup input {
+  border-color: #343738; }
+
+.todo-wrap h2 {
+  width: 100%; }
+
+.todo-wrap .todo-sidebar {
+  width: 30%; }
+
+.todo-wrap .todo-body {
+  padding: 0 0 0 30px;
+  width: 70%; }
+
+.todo-sidebar h3 {
+  margin: 40px 0 30px; }
+
+.todo-sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .todo-sidebar ul:hover li {
+    opacity: 1; }
+
+.todo-sidebar li {
+  display: block;
+  position: relative;
+  margin: 0;
+  opacity: .3;
+  transition: opacity .15s; }
+  .todo-sidebar li.active {
+    opacity: 1; }
+
+.todo-sidebar a {
+  display: block;
+  color: #343738;
+  font-size: 18px;
+  text-decoration: none;
+  transition: all .15s;
+  position: relative;
+  padding: 12px 0;
+  left: 0; }
+  .todo-sidebar a:hover {
+    color: #5BBAE3;
+    left: 4px; }
+
+.todo-body .form-wrap .form-group {
+  display: flex; }
+
+.todo-body .form-wrap input {
+  font-size: 28px;
+  width: 85%; }
+
+.todo-body .form-wrap .button {
+  background-color: #5BBAE3;
+  margin-top: 40px;
+  height: 50px;
+  width: 15%; }
+  .todo-body .form-wrap .button:hover {
+    background-color: #FF6B7E; }
+
+.todo-body .todo-list {
+  list-style: none;
+  margin: 45px 0 0;
+  padding: 0; }
+  .todo-body .todo-list a {
+    text-decoration: none; }
+  .todo-body .todo-list li {
+    padding: 15px; }
+  .todo-body .todo-list li.completed span.text {
+    opacity: 0.5;
+    text-decoration: line-through; }
+
+.button {
+  display: inline-block;
+  background-color: #466A80;
+  border-radius: 2px;
+  color: #fff;
+  border: 0;
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .1s;
+  width: auto; }
+  .button:hover {
+    background-color: #FF6B7E;
+    cursor: pointer;
+    color: #fff; }
+
+.greeting {
+  display: block;
+  padding: 45px 0;
+  margin: 0 auto;
+  max-width: 550px;
+  text-align: center; }
+  .greeting p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0 0 15px; }
+
+.user-header {
+  background-color: #f5f5f6;
+  padding: 15px 0;
+  margin: 0 0 30px; }
+  .user-header .container {
+    justify-content: space-between; }
+  .user-header p {
+    font-family: 'Arvo', serif; }

@@ -6,12 +6,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Node Authentication Demo</title>
         <link href="//fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
         <link rel="stylesheet" href="assets/css/main.css">
     </head>
     <body>
         <div id="main">
-            <div ng-view></div>
+            <div class="header" ng-include="'templates/partials/header.html'"></div>
+            <div class="page {{pageClass}}" ng-view></div>
         </div>
         <script src="assets/js/main.entry.js"></script>
     </body>

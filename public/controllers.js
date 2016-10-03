@@ -2,9 +2,10 @@ module.exports = function (app) {
     return app
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
             $scope.message = 'Welcome!';
+            $scope.pageClass = 'page-home';
         }])
         .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
-            $scope.message = 'Login';
+            $scope.pageClass = 'page-login';
 
             $scope.submit = function() {
                 $scope.errors = [];
@@ -36,6 +37,8 @@ module.exports = function (app) {
             };
         }])
         .controller('logoutController', ['$scope', '$rootScope', '$location', 'Logout', function ($scope, $rootScope, $location, Logout) {
+            $scope.pageClass = 'page-logout';
+
             Logout.get().$promise.then(function() {
                 $rootScope.user = '';
                 $location.path('/');
@@ -44,7 +47,7 @@ module.exports = function (app) {
             });
         }])
         .controller('signupController', ['$scope', '$location', 'Signup', function ($scope, $location, Signup) {
-            $scope.message = 'Signup';
+            $scope.pageClass = 'page-signup';
 
             $scope.submit = function () {
                 $scope.errors = [];
@@ -81,12 +84,12 @@ module.exports = function (app) {
             };
         }])
         .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
-            $scope.message = 'Your Profile';
             $scope.user = $rootScope.user;
+            $scope.pageClass = 'page-profile';
         }])
         .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-            $scope.message = 'Your Todos';
             $scope.user = $rootScope.user;
+            $scope.pageClass = 'page-todos';
 
             // Get all todos
             $scope.todos = Todo.query();

@@ -1,32 +1,33 @@
-<div ng-include="'templates/partials/header.html'"></div>
-<div class="inner-wrap section signup">
-    <div class="container">
-        <div class="greeting">
-            <h1>Sign up.</h1>
-            <p>Hey, you got things you need to do? Excellent. <br>todo'r can help.</p>
+<div class="inner-wrap">
+    <div class="inner-body">
+        <div class="container">
+            <div class="greeting">
+                <h1>Sign up.</h1>
+                <p>Hey, you got things you need to do? Excellent. <br>todo'r can help.</p>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="form-wrap">
-            <form ng-submit="submit()">
-                <div class="form-group">
-                    <label>First name</label>
-                    <input type="text" name="firstName" ng-model="firstName">
-                    <label>Last name</label>
-                    <input type="text" name="lastName" ng-model="lastName">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="text" name="email" ng-model="email">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" ng-model="password">
-                </div>
-                <button type="submit" class="button">Signup</button>
-                <div ng-include="'templates/partials/error.html'"></div>
-                <p>Already have an account? <a href="/login">Login</a></p>
-            </form>
+        <div class="container">
+            <div class="form-wrap">
+                <form ng-submit="submit()">
+                    <div class="form-group">
+                        <label>First name</label>
+                        <input type="text" name="firstName" ng-model="firstName">
+                        <label>Last name</label>
+                        <input type="text" name="lastName" ng-model="lastName">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" name="email" ng-model="email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" ng-model="password">
+                    </div>
+                    <button type="submit" class="button">Signup</button>
+                    <div ng-include="'templates/partials/error.html'"></div>
+                    <p>Already have an account? <a href="/login">Login</a></p>
+                </form>
+            </div>
         </div>
     </div>
 </div>

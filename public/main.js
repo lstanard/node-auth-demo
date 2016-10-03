@@ -3,10 +3,11 @@ var css         	= require('./scss/main.scss');
 var angular     	= require('angular');
 var ngRoute     	= require('angular-route');
 var ngResource  	= require('angular-resource');
+var ngAnimate 		= require('angular-animate');
 var _ 				= require('lodash');
 
 // Angular application
-var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource']);
+var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource', 'ngAnimate']);
 var config      	= require('./config.js')(todoApp);
 var services    	= require('./services.js')(todoApp);
 var directives  	= require('./directives.js')(todoApp);
