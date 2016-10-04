@@ -4,10 +4,21 @@
     margin: 0 0 30px;
 
     .container {
+        align-items: center;
         justify-content: space-between;
     }
 
     p {
     	font-family: 'Arvo', serif;
+    }
+
+    .list-search {
+        appearance: none;
+        border: 1px solid $hint;
+        height: 36px;
+        border-radius: 18px;
+        padding: 6px 12px;
+        margin: 0 0 0 5px;
+        outline: none;
     }
 }
