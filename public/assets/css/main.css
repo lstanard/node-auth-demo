@@ -384,6 +384,12 @@ h1 {
 h3 {
   font-size: 28px; }
 
+h4 {
+  border-top: 1px solid #e4e7e8;
+  font-size: 20px;
+  font-weight: 400;
+  color: #b3b7b8; }
+
 p {
   font-size: 16px;
   line-height: 1.4; }
@@ -552,10 +558,17 @@ p {
   .todo-body .todo-list a {
     text-decoration: none; }
   .todo-body .todo-list li {
-    padding: 15px; }
+    position: relative;
+    padding: 15px 0; }
   .todo-body .todo-list li.completed span.text {
     opacity: 0.5;
     text-decoration: line-through; }
+  .todo-body .todo-list .todo-edit img {
+    height: 12px;
+    width: 12px; }
+  .todo-body .todo-list .delete {
+    position: absolute;
+    right: 0; }
 
 .button {
   display: inline-block;
@@ -592,6 +605,15 @@ p {
   padding: 15px 0;
   margin: 0 0 30px; }
   .user-header .container {
+    align-items: center;
     justify-content: space-between; }
   .user-header p {
     font-family: 'Arvo', serif; }
+  .user-header .list-search {
+    appearance: none;
+    border: 1px solid #e4e7e8;
+    height: 36px;
+    border-radius: 18px;
+    padding: 6px 12px;
+    margin: 0 0 0 5px;
+    outline: none; }

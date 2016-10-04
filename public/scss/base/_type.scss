@@ -12,6 +12,13 @@ h3 {
     font-size: 28px;
 }
 
+h4 {
+    border-top: 1px solid $hint;
+    font-size: 20px;
+    font-weight: 400;
+    color: lighten($slate, 50%);
+}
+
 p {
     font-size: 16px;
     line-height: 1.4;
