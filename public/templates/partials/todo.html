@@ -1,16 +1,9 @@
 <li class="list-group-item" ng-repeat="todo in todos | orderBy:'-createdAt'" ng-class="!todo.completed || 'completed'">
     <input toggle-complete type="checkbox" class="todo-complete" ng-model="todo.completed" ng-change="toggleComplete(todo)">
-    <a href="#" class="todo-edit"><img src="icons/edit-pencil.svg" alt=" "></a>
-    <form ng-show="editing" ng-submit="update(todo); editing = false">
-        <div class="form-group">
-            <div class="input-group">
-                <input type="text" class="form-control" name="todo" ng-model="todo.text">
-                <span class="input-group-btn">
-                    <button type="submit" class="btn btn-success">Save</button>
-                </span>
-            </div>
-        </div>
+    <form ng-show="editing" ng-submit="update(todo); editing = false" class="edit-form">
+        <input type="text" class="form-control" name="todo" ng-model="todo.text">
+        <!-- <button type="submit" class="btn btn-success">Save</button> -->
     </form>
     <span class="text" ng-hide="editing" ng-click="editing = true">{{todo.text}}</span>
-    <span class="delete"><a href="#" ng-click="delete(todo); $event.preventDefault();">Delete</a></span>
+    <span class="options"><a href="#">Options</a></span>
 </li>

@@ -537,17 +537,23 @@ p {
     left: 4px; }
 
 .todo-body .form-wrap .form-group {
-  display: flex; }
+  display: flex;
+  position: relative; }
 
 .todo-body .form-wrap input {
+  border-color: #343738;
   font-size: 28px;
-  width: 85%; }
+  padding: 40px 80px 15px 15px;
+  width: 100%; }
 
 .todo-body .form-wrap .button {
+  position: absolute;
+  right: 0;
+  margin: 40px 0 0 0;
+  height: 40px;
+  width: 70px;
   background-color: #5BBAE3;
-  margin-top: 40px;
-  height: 50px;
-  width: 15%; }
+  font-size: 14px; }
   .todo-body .form-wrap .button:hover {
     background-color: #FF6B7E; }
 
@@ -558,17 +564,80 @@ p {
   .todo-body .todo-list a {
     text-decoration: none; }
   .todo-body .todo-list li {
+    height: auto;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
     position: relative;
-    padding: 15px 0; }
-  .todo-body .todo-list li.completed span.text {
+    padding: 5px 0; }
+  .todo-body .todo-list .todo-complete {
+    position: absolute;
+    left: 0;
+    width: 30px; }
+  .todo-body .todo-list .text {
+    display: block;
+    height: 45px;
+    width: calc(100% - 60px);
+    border: 1px solid #fff;
+    padding: 12px 30px 12px 10px;
+    position: absolute;
+    left: 30px;
+    transition: border .1s; }
+    .todo-body .todo-list .text:hover {
+      border-color: #e4e7e8;
+      cursor: text; }
+      .todo-body .todo-list .text:hover:after {
+        opacity: 1; }
+    .todo-body .todo-list .text:after {
+      background: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E %3Csvg width='20px' height='20px' viewBox='0 0 20 20' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E %3C!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch --%3E %3Ctitle%3Eedit-pencil%3C/title%3E %3Cdesc%3ECreated with Sketch.%3C/desc%3E %3Cdefs%3E%3C/defs%3E %3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E %3Cg id='edit-pencil' fill='%23000000'%3E %3Cpath d='M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z' id='Combined-Shape'%3E%3C/path%3E %3C/g%3E %3C/g%3E %3C/svg%3E") no-repeat right center;
+      background-size: 100%;
+      opacity: 0;
+      transition: opacity .1s;
+      height: 12px;
+      width: 12px;
+      display: block;
+      content: '';
+      position: absolute;
+      right: 8px;
+      top: 13px; }
+  .todo-body .todo-list .completed .text {
     opacity: 0.5;
     text-decoration: line-through; }
-  .todo-body .todo-list .todo-edit img {
-    height: 12px;
-    width: 12px; }
-  .todo-body .todo-list .delete {
+  .todo-body .todo-list .edit-form {
     position: absolute;
-    right: 0; }
+    left: 30px;
+    height: 45px;
+    width: calc(100% - 60px); }
+    .todo-body .todo-list .edit-form input {
+      height: 100%;
+      width: 100%;
+      border: 1px solid #e4e7e8;
+      padding: 12px 30px 12px 10px; }
+  .todo-body .todo-list .options {
+    position: absolute;
+    right: 0;
+    height: 45px;
+    width: 30px; }
+    .todo-body .todo-list .options a {
+      display: block;
+      position: relative;
+      height: 100%;
+      width: 18px;
+      opacity: .5;
+      transition: opacity .1s;
+      text-indent: -9000px; }
+      .todo-body .todo-list .options a:hover {
+        opacity: 1; }
+      .todo-body .todo-list .options a:after {
+        background: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E %3Csvg width='20px' height='20px' viewBox='0 0 20 20' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E %3C!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch --%3E %3Ctitle%3Edots-horizontal-triple%3C/title%3E %3Cdesc%3ECreated with Sketch.%3C/desc%3E %3Cdefs%3E%3C/defs%3E %3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E %3Cg id='dots-horizontal-triple' fill='%23000000'%3E %3Cpath d='M10,12 C11.1045695,12 12,11.1045695 12,10 C12,8.8954305 11.1045695,8 10,8 C8.8954305,8 8,8.8954305 8,10 C8,11.1045695 8.8954305,12 10,12 Z M10,6 C11.1045695,6 12,5.1045695 12,4 C12,2.8954305 11.1045695,2 10,2 C8.8954305,2 8,2.8954305 8,4 C8,5.1045695 8.8954305,6 10,6 Z M10,18 C11.1045695,18 12,17.1045695 12,16 C12,14.8954305 11.1045695,14 10,14 C8.8954305,14 8,14.8954305 8,16 C8,17.1045695 8.8954305,18 10,18 Z' id='Combined-Shape'%3E%3C/path%3E %3C/g%3E %3C/g%3E %3C/svg%3E") no-repeat right center;
+        background-size: 100%;
+        height: 100%;
+        width: 100%;
+        display: block;
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0; }
 
 .button {
   display: inline-block;

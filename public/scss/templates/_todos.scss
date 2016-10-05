@@ -70,18 +70,24 @@
 
         .form-group {
             display: flex;
+            position: relative;
         }
 
         input {
+            border-color: $slate;
             font-size: 28px;
-            width: 85%;
+            padding: 40px 80px 15px 15px;
+            width: 100%;
         }
 
         .button {
+            position: absolute;
+            right: 0;
+            margin: 40px 0 0 0;
+            height: 40px;
+            width: 70px;
             background-color: $sky;
-            margin-top: 40px;
-            height: 50px;
-            width: 15%;
+            font-size: 14px;
 
             &:hover {
                 background-color: $bubblegum;
@@ -98,26 +104,110 @@
             text-decoration: none;
         }
 
+        $item-height: 45px;
+
         li {
+            height: auto;
+            min-height: $item-height;
+            display: flex;
+            align-items: center;
             position: relative;
-            padding: 15px 0;
+            padding: 5px 0;
         }
 
-        li.completed span.text {
+        .todo-complete {
+            position: absolute;
+            left: 0;
+            width: 30px;
+        }
+
+        $text-width: calc(100% - 60px);
+
+        .text {
+            display: block;
+            height: $item-height;
+            width: $text-width;
+            border: 1px solid #fff;
+            padding: 12px 30px 12px 10px;
+            position: absolute;
+            left: 30px;
+            transition: border .1s;
+
+            &:hover {
+                border-color: $hint;
+                cursor: text;
+
+                &:after {
+                    opacity: 1;
+                }
+            }
+
+            &:after {
+                background: url('../icons/edit-pencil.svg') no-repeat right center;
+                background-size: 100%;
+                opacity: 0;
+                transition: opacity .1s;
+
+                height: 12px;
+                width: 12px;
+                display: block;
+                content: '';
+                position: absolute;
+                right: 8px;
+                top: 13px;
+            }
+        }
+
+        .completed .text {
             opacity: 0.5;
             text-decoration: line-through;
         }
 
-        .todo-edit {
-            img {
-                height: 12px;
-                width: 12px;
+        .edit-form {
+            position: absolute;
+            left: 30px;
+            height: $item-height;
+            width: $text-width;
+
+            input {
+                height: 100%;
+                width: 100%;
+                border: 1px solid $hint;
+                padding: 12px 30px 12px 10px;
             }
         }
 
-        .delete {
+        .options {
             position: absolute;
             right: 0;
+            height: $item-height;
+            width: 30px;
+
+            a {
+                display: block;
+                position: relative;
+                height: 100%;
+                width: 18px;
+                opacity: .5;
+                transition: opacity .1s;
+                text-indent: -9000px;
+
+                &:hover {
+                    opacity: 1;
+                }
+
+                &:after {
+                    background: url('../icons/dots-horizontal-triple.svg') no-repeat right center;
+                    background-size: 100%;                
+                    height: 100%;
+                    width: 100%;
+                    display: block;
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+            }
         }
     }
 }

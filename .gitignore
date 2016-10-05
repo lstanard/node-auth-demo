@@ -1,3 +1,8 @@
 node_modules
 config/auth.js
 *.log
+
+# Ignore all icons, then add back in as needed
+public/icons/*.svg
+!public/icons/dots-horizontal-triple.svg
+!public/icons/edit-pencil.svg
