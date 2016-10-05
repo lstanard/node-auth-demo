@@ -12,6 +12,10 @@ var loaders = [
 	{
 		test: /\.scss$/,
 		loader: extractTextPlugin.extract('style', 'css!sass!postcss')
+	},
+	{
+		test: /\.svg/,
+		loader: 'svg-url-loader'
 	}
 ]
 
