@@ -126,18 +126,5 @@ module.exports = function (app) {
                     );
                 }
             };
-
-            // Delete todo
-            $scope.delete = function (todo) {
-                if (todo) {
-                    var index = _.indexOf($scope.todos, _.find($scope.todos, { _id: todo._id }));
-
-                    Todo.delete({
-                        todo_id: todo._id
-                    }, function () {
-                        $scope.todos.splice(index, 1);
-                    });
-                }
-            };
         }]);
 };

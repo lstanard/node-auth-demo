@@ -182,30 +182,61 @@
             right: 0;
             height: $item-height;
             width: 30px;
+            
+            &:hover {
+                cursor: pointer;
 
-            a {
-                display: block;
-                position: relative;
-                height: 100%;
-                width: 18px;
-                opacity: .5;
-                transition: opacity .1s;
-                text-indent: -9000px;
-
-                &:hover {
+                &:after {
                     opacity: 1;
                 }
 
-                &:after {
-                    background: url('../icons/dots-horizontal-triple.svg') no-repeat right center;
-                    background-size: 100%;                
-                    height: 100%;
-                    width: 100%;
+                .menu {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+
+            &:after {
+                height: 100%;
+                width: 18px;
+                display: block;
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                background: url('../icons/dots-horizontal-triple.svg') no-repeat right center;
+                background-size: 100%;                
+                opacity: .5;
+                transition: opacity .1s;
+            }
+
+            .menu {
+                background-color: #fff;
+                border: 1px solid $hint;
+                box-shadow: 1px 1px 0 0 rgba(0, 0, 0, 0.1);
+                text-align: center;
+                transition: opacity .1s;
+                visibility: hidden;
+                opacity: 0;
+                padding: 5px 0;
+                min-width: 90px;
+                position: absolute;
+                left: -35px;
+                top: 35px;
+                width: auto;
+                z-index: 1;
+
+                a {
+                    color: $primary;
+                    font-size: 12px;
+                    text-decoration: none;
+                    padding: 2px 0;
                     display: block;
-                    content: '';
-                    position: absolute;
-                    left: 0;
-                    top: 0;
+                    width: 100%;
+
+                    &:hover {
+                        background-color: $hint;
+                    }
                 }
             }
         }
