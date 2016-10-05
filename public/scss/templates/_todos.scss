@@ -88,6 +88,7 @@
             width: 70px;
             background-color: $sky;
             font-size: 14px;
+            text-transform: uppercase;
 
             &:hover {
                 background-color: $bubblegum;
@@ -173,7 +174,54 @@
                 height: 100%;
                 width: 100%;
                 border: 1px solid $hint;
-                padding: 12px 30px 12px 10px;
+                padding: 12px 70px 12px 10px;
+            }
+            
+            .save,
+            .cancel {
+                display: block;
+                position: absolute;
+                right: 0;
+                top: 13px;
+                height: 20px;
+                width: 20px;
+                z-index: 1;
+                cursor: pointer;
+
+                span {
+                    display: none;
+                }
+
+                &:after {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    background-size: 100%;  
+                }
+            }
+
+            .save {
+                appearance: none;
+                border: none;
+                background: transparent;
+                padding: 0;
+                margin: 0;
+                right: 40px;
+                
+                &:after {
+                    background: url('../icons/checkmark.svg') no-repeat 50% 50%;
+                }
+            }
+
+            .cancel {
+                margin: 0;
+                padding: 0;
+                right: 10px;
+
+                &:after {
+                    background: url('../icons/close.svg') no-repeat 50% 50%;
+                }   
             }
         }
 
@@ -224,7 +272,7 @@
                 left: -35px;
                 top: 35px;
                 width: auto;
-                z-index: 1;
+                z-index: 2;
 
                 a {
                     color: $primary;

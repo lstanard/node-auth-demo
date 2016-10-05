@@ -553,7 +553,8 @@ p {
   height: 40px;
   width: 70px;
   background-color: #5BBAE3;
-  font-size: 14px; }
+  font-size: 14px;
+  text-transform: uppercase; }
   .todo-body .form-wrap .button:hover {
     background-color: #FF6B7E; }
 
@@ -612,7 +613,42 @@ p {
       height: 100%;
       width: 100%;
       border: 1px solid #e4e7e8;
-      padding: 12px 30px 12px 10px; }
+      padding: 12px 70px 12px 10px; }
+    .todo-body .todo-list .edit-form .save,
+    .todo-body .todo-list .edit-form .cancel {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 13px;
+      height: 20px;
+      width: 20px;
+      z-index: 1;
+      cursor: pointer; }
+      .todo-body .todo-list .edit-form .save span,
+      .todo-body .todo-list .edit-form .cancel span {
+        display: none; }
+      .todo-body .todo-list .edit-form .save:after,
+      .todo-body .todo-list .edit-form .cancel:after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-size: 100%; }
+    .todo-body .todo-list .edit-form .save {
+      appearance: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      right: 40px; }
+      .todo-body .todo-list .edit-form .save:after {
+        background: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E %3Csvg width='20px' height='20px' viewBox='0 0 20 20' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E %3C!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch --%3E %3Ctitle%3Echeckmark%3C/title%3E %3Cdesc%3ECreated with Sketch.%3C/desc%3E %3Cdefs%3E%3C/defs%3E %3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E %3Cg id='checkmark' fill='%23000000'%3E %3Cpolygon id='Path-126' points='0 11 2 9 7 14 18 3 20 5 7 18'%3E%3C/polygon%3E %3C/g%3E %3C/g%3E %3C/svg%3E") no-repeat 50% 50%; }
+    .todo-body .todo-list .edit-form .cancel {
+      margin: 0;
+      padding: 0;
+      right: 10px; }
+      .todo-body .todo-list .edit-form .cancel:after {
+        background: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E %3Csvg width='20px' height='20px' viewBox='0 0 20 20' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E %3C!-- Generator: Sketch 3.7.2 (28276) - http://www.bohemiancoding.com/sketch --%3E %3Ctitle%3Eclose%3C/title%3E %3Cdesc%3ECreated with Sketch.%3C/desc%3E %3Cdefs%3E%3C/defs%3E %3Cg id='Page-1' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E %3Cg id='close' fill='%23000000'%3E %3Cpolygon id='Combined-Shape' points='10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644'%3E%3C/polygon%3E %3C/g%3E %3C/g%3E %3C/svg%3E") no-repeat 50% 50%; }
   .todo-body .todo-list .options {
     position: absolute;
     right: 0;
@@ -651,7 +687,7 @@ p {
       left: -35px;
       top: 35px;
       width: auto;
-      z-index: 1; }
+      z-index: 2; }
       .todo-body .todo-list .options .menu a {
         color: #466A80;
         font-size: 12px;

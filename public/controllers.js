@@ -114,17 +114,5 @@ module.exports = function (app) {
                     });
                 }
             };
-
-            // Update/edit a todo
-            $scope.update = function (todo) {
-                if (todo) {
-                    Todo.update(
-                        // Find todo by id
-                        { todo_id: todo._id },
-                        // Properties to update
-                        { todo: todo.text }
-                    );
-                }
-            };
         }]);
 };
