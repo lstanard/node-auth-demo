@@ -737,6 +737,8 @@ p {
     justify-content: space-between; }
   .user-header p {
     font-family: 'Arvo', serif; }
+  .user-header .search {
+    display: none; }
   .user-header .list-search {
     appearance: none;
     border: 1px solid #e4e7e8;

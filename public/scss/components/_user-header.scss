@@ -12,6 +12,10 @@
     	font-family: 'Arvo', serif;
     }
 
+    .search {
+        display: none; // temporarily hide
+    }
+
     .list-search {
         appearance: none;
         border: 1px solid $hint;
