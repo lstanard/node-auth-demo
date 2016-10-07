@@ -2,8 +2,31 @@ module.exports = function (app) {
     return app
         .directive('addList', function (List) {
             return {
+                restrict: 'A', // attribute
+                scope: false,
                 link: function (scope, elem, attrs) {
-                    // stuff
+                    scope.createList = function () {
+                        scope.errors = [];
+
+                        if (!scope.list.name) {
+                            scope.errors.push('Please give the list a name');
+                        }
+
+                        if (scope.list.name) {
+                            List.save({}, {
+                                name: scope.list.name,
+                                description: scope.list.description
+                            }).$promise.then(function(result) {
+                                scope.lists.push(result);
+                                scope.closeModal();
+                                scope.list = '';
+                                scope.$apply();
+                            }, function (error) {
+                                console.log(error);
+                                scope.error = 'Something went wrong';
+                            });
+                        }
+                    }
                 }
             }
         })

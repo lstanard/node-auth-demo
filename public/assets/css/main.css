@@ -373,7 +373,8 @@ html {
 body {
   font-family: 'Montserrat', sans-serif; }
 
-h1, p {
+h1, h2, h3, h4, h5, h6, p {
+  font-family: 'Montserrat', sans-serif;
   color: #343738; }
 
 h1 {
@@ -826,7 +827,6 @@ p {
 .ngdialog.ngdialog-disabled-animation,
 .ngdialog.ngdialog-disabled-animation .ngdialog-overlay,
 .ngdialog.ngdialog-disabled-animation .ngdialog-content {
-  -webkit-animation: none !important;
   animation: none !important; }
 
 .ngdialog-overlay {
@@ -836,28 +836,22 @@ p {
   right: 0;
   bottom: 0;
   left: 0;
-  -webkit-backface-visibility: hidden;
-  -webkit-animation: ngdialog-fadein 0.5s;
   animation: ngdialog-fadein 0.5s; }
 
 .ngdialog-no-overlay {
   pointer-events: none; }
 
 .ngdialog.ngdialog-closing .ngdialog-overlay {
-  -webkit-backface-visibility: hidden;
-  -webkit-animation: ngdialog-fadeout 0.5s;
   animation: ngdialog-fadeout 0.5s; }
 
 .ngdialog-content {
   background: white;
-  -webkit-backface-visibility: hidden;
-  -webkit-animation: ngdialog-fadein 0.5s;
+  backface-visibility: hidden;
   animation: ngdialog-fadein 0.5s;
   pointer-events: all; }
 
 .ngdialog.ngdialog-closing .ngdialog-content {
-  -webkit-backface-visibility: hidden;
-  -webkit-animation: ngdialog-fadeout 0.5s;
+  backface-visibility: hidden;
   animation: ngdialog-fadeout 0.5s; }
 
 .ngdialog-close:before {
@@ -918,8 +912,7 @@ body.ngdialog-open {
   animation: ngdialog-flyout .5s; }
 
 .ngdialog.ngdialog-theme-default .ngdialog-content {
-  -webkit-animation: ngdialog-flyin .5s;
-  animation: ngdialog-flyin .5s;
+  animation: ngdialog-flyin .25s;
   background: #f0f0f0;
   border-radius: 5px;
   color: #444;
