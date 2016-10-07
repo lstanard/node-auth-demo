@@ -87,6 +87,40 @@ module.exports = function (app) {
             $scope.user = $rootScope.user;
             $scope.pageClass = 'page-profile';
         }])
+        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
+            $scope.user = $rootScope.user;
+
+            // Get all lists for current user
+            $scope.lists = List.query();
+
+            $scope.openModal = function () {
+                ngDialog.open({
+                    template: 'templates/partials/new-list.html',
+                    className: 'ngdialog-theme-default'
+                });
+            };
+
+            $scope.createList = function () {
+                $scope.errors = [];
+
+                if (!$scope.list.name) {
+                    $scope.errors.push('Please give the list a name');
+                }
+
+                if ($scope.list.name) {
+                    var list = List.save({}, {
+                        name: $scope.list.name,
+                        description: $scope.list.description
+                    }).$promise.then(function(result) {
+                        $scope.lists.push(result);
+                        $scope.list.name = '';
+                    }, function (error) {
+                        console.log(error);
+                        $scope.error = 'Something went wrong';
+                    });
+                }
+            }
+        }])
         .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
             $scope.user = $rootScope.user;
             $scope.pageClass = 'page-todos';

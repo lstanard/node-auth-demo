@@ -7,7 +7,7 @@ var todoSchema = mongoose.Schema({
     completed: Boolean,
     subdomain: {
         type: ObjectId,
-        ref: 'User'
+        ref: 'List'
     }
 }, { timestamps: true });
 

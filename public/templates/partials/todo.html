@@ -1,4 +1,4 @@
-<li class="list-group-item" ng-repeat="todo in todos | orderBy:['completed', '-createdAt']" ng-class="!todo.completed || 'completed'">
+<li class="list-group-item" ng-repeat="todo in todos | orderBy:['completed', '-updatedAt']" ng-class="!todo.completed || 'completed'">
     <input toggle-complete type="checkbox" class="todo-complete" ng-model="todo.completed" ng-change="toggleComplete(todo)">
     <form todo-edit ng-show="editing" ng-submit="update(todo); editing = false" class="edit-form">
         <input type="text" class="form-control" name="todo" ng-model="todo.text">

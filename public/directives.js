@@ -1,5 +1,12 @@
 module.exports = function (app) {
     return app
+        .directive('addList', function (List) {
+            return {
+                link: function (scope, elem, attrs) {
+                    // stuff
+                }
+            }
+        })
         .directive('todoEdit', function (Todo) {
             return {
                 scope: false,

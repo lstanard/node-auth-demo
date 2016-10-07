@@ -33,6 +33,15 @@ module.exports = function (app) {
                         }
                     }
                 })
+                .when('/lists/:id', {
+                    templateUrl: 'templates/todos.html',
+                    controller: 'todoController',
+                    resolve: {
+                        'auth': function(Authentication) {
+                            return Authentication.authenticate();
+                        }
+                    }
+                })
                 // route for todos page
                 .when('/todos', {
                     templateUrl: 'templates/todos.html',

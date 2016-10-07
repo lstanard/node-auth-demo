@@ -9,12 +9,12 @@ User.userSchema = mongoose.Schema({
         first: String,
         last: String
     },
-    local            : {
-        email        : {
+    local: {
+        email: {
             type: String,
             required: true
         },
-        password     : {
+        password: {
             type: String,
             required: true
         }

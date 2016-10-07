@@ -2,6 +2,13 @@ module.exports = function (app) {
     return app
 
         // API resources
+        .factory('List', function ($resource) {
+            return $resource('/api/lists/:list_id',
+                { list_id: '@list_id' },
+                {
+                    'update': { method: 'PUT' }
+                });
+        })
         .factory('Todo', function ($resource) {
             return $resource('/api/todos/:todo_id',
                 { todo_id: '@todo_id' },

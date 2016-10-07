@@ -1,0 +1,12 @@
+<div class="dialog-contents" ng-controller="listController">
+    <h3>New list</h3>
+    <form ng-submit="createList()">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" ng-model="list.name">
+            <textarea name="description" ng-model="list.description" rows="10"></textarea>
+            <button type="submit" class="button">Create list</button>
+        </div>
+        <div ng-include="'templates/partials/error.html'"></div>
+    </form>
+</div>

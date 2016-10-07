@@ -1,6 +1,38 @@
 module.exports = function(app, passport) {
 
+    var List = require('./models/list');
     var Todo = require('./models/todo');
+
+    // =====================================
+    // LISTS ===============================
+    // =====================================
+    
+    // get all lists for current user
+    app.get('/api/lists', isLoggedIn, function(req, res) {
+        List.find({
+            subdomain: req.user._id
+        }).exec(function(err, lists) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(lists);
+        });
+    });
+
+    app.post('/api/lists', isLoggedIn, function(req, res) {
+        List.create({
+            name: req.body.name,
+            description: req.body.description,
+            subdomain: req.user._id
+        }, function (err, list) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(list);
+        });
+    });
 
     // =====================================
     // TODOS ===============================
