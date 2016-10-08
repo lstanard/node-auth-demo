@@ -6,7 +6,7 @@ module.exports = function(app, passport) {
     // =====================================
     // LISTS ===============================
     // =====================================
-    
+
     // get all lists for current user
     app.get('/api/lists', isLoggedIn, function(req, res) {
         List.find({
@@ -31,6 +31,36 @@ module.exports = function(app, passport) {
             }
 
             res.json(list);
+        });
+    });
+
+    app.put('/api/lists/:list_id', isLoggedIn, function(req, res) {
+        List.findOneAndUpdate({
+            _id: req.params.list_id
+        }, {
+            name: req.body.name,
+            completed: req.body.description
+        }, { new: true }, function (err, todo) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(list);
+        });
+    });
+
+    app.delete('/api/lists/:list_id', isLoggedIn, function(req, res) {
+        List.remove({
+            _id: req.params.list_id
+        }, function (err, obj) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            if (obj.result.n === 0)
+                res.send('List not found');
+
+            res.send(); // no reponse data
         });
     });
 

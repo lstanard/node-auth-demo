@@ -57,6 +57,7 @@
 	var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource', 'ngAnimate', 'ngDialog']);
 	var config      	= __webpack_require__(13)(todoApp);
 	var services    	= __webpack_require__(14)(todoApp);
+	var resources    	= __webpack_require__(17)(todoApp);
 	var directives  	= __webpack_require__(15)(todoApp);
 	var controllers 	= __webpack_require__(16)(todoApp);
 
@@ -55908,61 +55909,8 @@
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
-	    return app
-
-	        // API resources
-	        .factory('List', function ($resource) {
-	            return $resource('/api/lists/:list_id',
-	                { list_id: '@list_id' },
-	                {
-	                    'update': { method: 'PUT' }
-	                });
-	        })
-	        .factory('Todo', function ($resource) {
-	            return $resource('/api/todos/:todo_id',
-	                { todo_id: '@todo_id' },
-	                {
-	                    'update': { method: 'PUT' }
-	                });
-	        })
-
-	        // User services
-	        .factory('Login', function ($resource) {
-	            return $resource('/login');
-	        })
-	        .factory('Logout', function ($resource) {
-	            return $resource('/logout');
-	        })
-	        .factory('Signup', function ($resource) {
-	            return $resource('/signup');
-	        })
-	        .factory('User', function ($resource) {
-	            return $resource('/user', {}, {
-	                'query': {
-	                    method: 'GET',
-	                    isArray: false
-	                }
-	            });
-	        })
-	        .factory('Authentication', function ($q, $rootScope, User) {
-	            return {
-	                authenticate: function () {
-	                    if ($rootScope.user) {
-	                        return $q.resolve($rootScope.user);
-	                    } else {
-	                        var user = User.query();
-	                        return user.$promise.then(function(data) {
-	                            $rootScope.user = data;
-	                            return true;
-	                        }, function(error) {
-	                            return $q.reject('Not authenticated');
-	                        });
-	                    }
-	                }
-	            }
-	        });
+	    return app;
 	};
-
 
 /***/ },
 /* 15 */
@@ -56056,6 +56004,73 @@
 
 	module.exports = function (app) {
 	    return app
+
+	        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
+	            $scope.user = $rootScope.user;
+
+	            // Get all lists for current user
+	            $scope.lists = List.query(function () {
+	                $rootScope.activeList = $scope.lists[0];
+	            });
+
+	            $scope.delete = function (list) {
+	                var index = _.indexOf($scope.lists, _.find($scope.todoslist, { _id: list._id }));
+
+	                List.delete({
+	                    list_id: list._id
+	                }, function () {
+	                    $scope.lists.splice(index, 1);
+	                });
+	            };
+
+	            $scope.openModal = function () {
+	                ngDialog.open({
+	                    template: 'templates/partials/new-list.html',
+	                    className: 'ngdialog-theme-default'
+	                });
+	            };
+
+	            $scope.closeModal = function () {
+	                ngDialog.closeAll();
+	            };
+	        }])
+	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
+	            $scope.user = $rootScope.user;
+	            $scope.pageClass = 'page-todos';
+
+	            // Get all todos
+	            if ($rootScope.activeList) {
+	                $scope.todos = Todo.query({
+	                    list_id: $rootScope.activeList._id
+	                });
+	            } else {
+	                console.log('No list currently active');
+	            }
+
+	            // Save new todo
+	            $scope.submit = function () {
+	                $scope.errors = [];
+
+	                if (!$scope.todo) {
+	                    $scope.errors.push('You need to enter something to do!');
+	                }
+
+	                if ($rootScope.activeList && $scope.todo) {
+	                    var todo = Todo.save({}, {
+	                        todo: $scope.todo,
+	                        list_id: $rootScope.activeList._id
+	                    }).$promise.then(function(result) {
+	                        $scope.todos.push(result);
+	                        $scope.todo = $scope.errors = '';
+	                    }, function (error) {
+	                        console.log(error);
+	                        $scope.error = 'Something went wrong';
+	                    });
+	                }
+	            };
+	        }])
+
+	        // User controllers
 	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
 	            $scope.message = 'Welcome!';
 	            $scope.pageClass = 'page-home';
@@ -56142,53 +56157,69 @@
 	        .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 	            $scope.user = $rootScope.user;
 	            $scope.pageClass = 'page-profile';
-	        }])
-	        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
-	            $scope.user = $rootScope.user;
-
-	            // Get all lists for current user
-	            $scope.lists = List.query();
-
-	            $scope.openModal = function () {
-	                ngDialog.open({
-	                    template: 'templates/partials/new-list.html',
-	                    className: 'ngdialog-theme-default'
-	                });
-	            };
-
-	            $scope.closeModal = function () {
-	                ngDialog.closeAll();
-	            };
-	        }])
-	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-	            $scope.user = $rootScope.user;
-	            $scope.pageClass = 'page-todos';
-
-	            // Get all todos
-	            $scope.todos = Todo.query();
-
-	            // Save new todo
-	            $scope.submit = function () {
-	                $scope.errors = [];
-
-	                if (!$scope.todo) {
-	                    $scope.errors.push('You need to enter something to do!');
-	                }
-
-	                if ($scope.todo) {
-	                    var todo = Todo.save({}, {
-	                        todo: $scope.todo
-	                    }).$promise.then(function(result) {
-	                        $scope.todos.push(result);
-	                        $scope.todo = $scope.errors = '';
-	                    }, function (error) {
-	                        console.log(error);
-	                        $scope.error = 'Something went wrong';
-	                    });
-	                }
-	            };
 	        }]);
 	};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
+
+	        // API resources
+	        .factory('List', function ($resource) {
+	            return $resource('/api/lists/:list_id',
+	                { list_id: '@list_id' },
+	                {
+	                    'update': { method: 'PUT' }
+	                });
+	        })
+	        .factory('Todo', function ($resource) {
+	            return $resource('/api/todos/:todo_id',
+	                { todo_id: '@todo_id' },
+	                {
+	                    'update': { method: 'PUT' }
+	                });
+	        })
+
+	        // User services
+	        .factory('Login', function ($resource) {
+	            return $resource('/login');
+	        })
+	        .factory('Logout', function ($resource) {
+	            return $resource('/logout');
+	        })
+	        .factory('Signup', function ($resource) {
+	            return $resource('/signup');
+	        })
+	        .factory('User', function ($resource) {
+	            return $resource('/user', {}, {
+	                'query': {
+	                    method: 'GET',
+	                    isArray: false
+	                }
+	            });
+	        })
+	        .factory('Authentication', function ($q, $rootScope, User) {
+	            return {
+	                authenticate: function () {
+	                    if ($rootScope.user) {
+	                        return $q.resolve($rootScope.user);
+	                    } else {
+	                        var user = User.query();
+	                        return user.$promise.then(function(data) {
+	                            $rootScope.user = data;
+	                            return true;
+	                        }, function(error) {
+	                            return $q.reject('Not authenticated');
+	                        });
+	                    }
+	                }
+	            }
+	        });
+	};
+
 
 /***/ }
 /******/ ]);
