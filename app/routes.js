@@ -69,7 +69,7 @@ module.exports = function(app, passport) {
     // =====================================
 
     // get all todos in the database
-    app.get('/api/todos', isLoggedIn, function(req, res) {
+    app.get('/api/lists/:list_id/todos', isLoggedIn, function(req, res) {
         Todo.find({
             subdomain: req.user._id
         }).exec(function(err, todos) {
@@ -82,7 +82,7 @@ module.exports = function(app, passport) {
     });
 
     // create new todo
-    app.post('/api/todos', isLoggedIn, function(req, res) {
+    app.post('/api/lists/:list_id/todos', isLoggedIn, function(req, res) {
         Todo.create({
             text: req.body.todo,
             completed: false,
@@ -97,7 +97,7 @@ module.exports = function(app, passport) {
     });
 
     // update a todo
-    app.put('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+    app.put('/api/lists/:list_id/todos/:todo_id', isLoggedIn, function(req, res) {
         Todo.findOneAndUpdate({
             _id: req.params.todo_id
         }, {
@@ -113,7 +113,7 @@ module.exports = function(app, passport) {
     });
 
     // delete a todo
-    app.delete('/api/todos/:todo_id', isLoggedIn, function(req, res) {
+    app.delete('/api/lists/:list_id/todos/:todo_id', isLoggedIn, function(req, res) {
         Todo.remove({
             _id: req.params.todo_id
         }, function (err, obj) {
