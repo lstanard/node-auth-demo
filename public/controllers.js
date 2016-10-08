@@ -1,5 +1,72 @@
 module.exports = function (app) {
     return app
+
+        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
+            $scope.user = $rootScope.user;
+
+            // Get all lists for current user
+            $scope.lists = List.query(function () {
+                $rootScope.activeList = $scope.lists[0];
+            });
+
+            $scope.delete = function (list) {
+                var index = _.indexOf($scope.lists, _.find($scope.todoslist, { _id: list._id }));
+
+                List.delete({
+                    list_id: list._id
+                }, function () {
+                    $scope.lists.splice(index, 1);
+                });
+            };
+
+            $scope.openModal = function () {
+                ngDialog.open({
+                    template: 'templates/partials/new-list.html',
+                    className: 'ngdialog-theme-default'
+                });
+            };
+
+            $scope.closeModal = function () {
+                ngDialog.closeAll();
+            };
+        }])
+        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
+            $scope.user = $rootScope.user;
+            $scope.pageClass = 'page-todos';
+
+            // Get all todos
+            if ($rootScope.activeList) {
+                $scope.todos = Todo.query({
+                    list_id: $rootScope.activeList._id
+                });
+            } else {
+                console.log('No list currently active');
+            }
+
+            // Save new todo
+            $scope.submit = function () {
+                $scope.errors = [];
+
+                if (!$scope.todo) {
+                    $scope.errors.push('You need to enter something to do!');
+                }
+
+                if ($rootScope.activeList && $scope.todo) {
+                    var todo = Todo.save({}, {
+                        todo: $scope.todo,
+                        list_id: $rootScope.activeList._id
+                    }).$promise.then(function(result) {
+                        $scope.todos.push(result);
+                        $scope.todo = $scope.errors = '';
+                    }, function (error) {
+                        console.log(error);
+                        $scope.error = 'Something went wrong';
+                    });
+                }
+            };
+        }])
+
+        // User controllers
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
             $scope.message = 'Welcome!';
             $scope.pageClass = 'page-home';
@@ -86,50 +153,5 @@ module.exports = function (app) {
         .controller('profileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
             $scope.user = $rootScope.user;
             $scope.pageClass = 'page-profile';
-        }])
-        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
-            $scope.user = $rootScope.user;
-
-            // Get all lists for current user
-            $scope.lists = List.query();
-
-            $scope.openModal = function () {
-                ngDialog.open({
-                    template: 'templates/partials/new-list.html',
-                    className: 'ngdialog-theme-default'
-                });
-            };
-
-            $scope.closeModal = function () {
-                ngDialog.closeAll();
-            };
-        }])
-        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-            $scope.user = $rootScope.user;
-            $scope.pageClass = 'page-todos';
-
-            // Get all todos
-            $scope.todos = Todo.query();
-
-            // Save new todo
-            $scope.submit = function () {
-                $scope.errors = [];
-
-                if (!$scope.todo) {
-                    $scope.errors.push('You need to enter something to do!');
-                }
-
-                if ($scope.todo) {
-                    var todo = Todo.save({}, {
-                        todo: $scope.todo
-                    }).$promise.then(function(result) {
-                        $scope.todos.push(result);
-                        $scope.todo = $scope.errors = '';
-                    }, function (error) {
-                        console.log(error);
-                        $scope.error = 'Something went wrong';
-                    });
-                }
-            };
         }]);
 };

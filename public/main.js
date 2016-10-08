@@ -11,5 +11,6 @@ var _ 				= require('lodash');
 var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource', 'ngAnimate', 'ngDialog']);
 var config      	= require('./config.js')(todoApp);
 var services    	= require('./services.js')(todoApp);
+var resources    	= require('./resources.js')(todoApp);
 var directives  	= require('./directives.js')(todoApp);
 var controllers 	= require('./controllers.js')(todoApp);
