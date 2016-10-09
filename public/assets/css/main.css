@@ -506,6 +506,8 @@ p {
   width: 75%; }
 
 .todo-sidebar h3 {
+  font-size: 24px;
+  line-height: 1.2;
   margin: 40px 0 30px;
   position: relative; }
   .todo-sidebar h3 a {
@@ -514,10 +516,11 @@ p {
     width: 20px;
     height: 20px;
     position: relative;
-    margin-top: 8px;
+    margin-top: 4px;
     color: #466A80;
     font-size: 12px;
-    text-decoration: none; }
+    text-decoration: none;
+    outline: none; }
     .todo-sidebar h3 a span {
       display: none; }
     .todo-sidebar h3 a:after {
