@@ -20,14 +20,25 @@ module.exports = function (app) {
             };
 
             $scope.openModal = function () {
-                ngDialog.open({
+                var dialog = ngDialog.open({
                     template: 'templates/partials/new-list.html',
-                    className: 'ngdialog-theme-default'
+                    className: 'ngdialog-theme-default',
+                    controller: function ($scope) {
+                        $scope.createList = function () {
+                            dialog.close($scope.list);
+                        }
+                    }
                 });
-            };
-
-            $scope.closeModal = function () {
-                ngDialog.closeAll();
+                dialog.closePromise.then(function(data) {
+                    List.save({}, {
+                        name: data.value.name,
+                        description: data.value.description
+                    }).$promise.then(function(result) {
+                        $scope.lists.push(result);
+                    }, function (error) {
+                        console.log(error);
+                    });
+                });
             };
         }])
         .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {

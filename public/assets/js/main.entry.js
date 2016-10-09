@@ -57,9 +57,9 @@
 	var todoApp     	= angular.module('todo', ['ngRoute', 'ngResource', 'ngAnimate', 'ngDialog']);
 	var config      	= __webpack_require__(13)(todoApp);
 	var services    	= __webpack_require__(14)(todoApp);
-	var resources    	= __webpack_require__(17)(todoApp);
-	var directives  	= __webpack_require__(15)(todoApp);
-	var controllers 	= __webpack_require__(16)(todoApp);
+	var resources    	= __webpack_require__(15)(todoApp);
+	var directives  	= __webpack_require__(16)(todoApp);
+	var controllers 	= __webpack_require__(17)(todoApp);
 
 
 /***/ },
@@ -55918,36 +55918,67 @@
 
 	module.exports = function (app) {
 	    return app
-	        .directive('addList', function (List) {
+
+	        // API resources
+	        .factory('List', function ($resource) {
+	            return $resource('/api/lists/:list_id',
+	                { list_id: '@list_id' },
+	                {
+	                    'update': { method: 'PUT' }
+	                });
+	        })
+	        .factory('Todo', function ($resource) {
+	            return $resource('/api/todos/:todo_id',
+	                { todo_id: '@todo_id' },
+	                {
+	                    'update': { method: 'PUT' }
+	                });
+	        })
+
+	        // User services
+	        .factory('Login', function ($resource) {
+	            return $resource('/login');
+	        })
+	        .factory('Logout', function ($resource) {
+	            return $resource('/logout');
+	        })
+	        .factory('Signup', function ($resource) {
+	            return $resource('/signup');
+	        })
+	        .factory('User', function ($resource) {
+	            return $resource('/user', {}, {
+	                'query': {
+	                    method: 'GET',
+	                    isArray: false
+	                }
+	            });
+	        })
+	        .factory('Authentication', function ($q, $rootScope, User) {
 	            return {
-	                restrict: 'A', // attribute
-	                scope: false,
-	                link: function (scope, elem, attrs) {
-	                    scope.createList = function () {
-	                        scope.errors = [];
-
-	                        if (!scope.list.name) {
-	                            scope.errors.push('Please give the list a name');
-	                        }
-
-	                        if (scope.list.name) {
-	                            List.save({}, {
-	                                name: scope.list.name,
-	                                description: scope.list.description
-	                            }).$promise.then(function(result) {
-	                                scope.lists.push(result);
-	                                scope.closeModal();
-	                                scope.list = '';
-	                                scope.$apply();
-	                            }, function (error) {
-	                                console.log(error);
-	                                scope.error = 'Something went wrong';
-	                            });
-	                        }
+	                authenticate: function () {
+	                    if ($rootScope.user) {
+	                        return $q.resolve($rootScope.user);
+	                    } else {
+	                        var user = User.query();
+	                        return user.$promise.then(function(data) {
+	                            $rootScope.user = data;
+	                            return true;
+	                        }, function(error) {
+	                            return $q.reject('Not authenticated');
+	                        });
 	                    }
 	                }
 	            }
-	        })
+	        });
+	};
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = function (app) {
+	    return app
 	        .directive('todoEdit', function (Todo) {
 	            return {
 	                scope: false,
@@ -55999,7 +56030,7 @@
 	};
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
@@ -56024,14 +56055,25 @@
 	            };
 
 	            $scope.openModal = function () {
-	                ngDialog.open({
+	                var dialog = ngDialog.open({
 	                    template: 'templates/partials/new-list.html',
-	                    className: 'ngdialog-theme-default'
+	                    className: 'ngdialog-theme-default',
+	                    controller: function ($scope) {
+	                        $scope.createList = function () {
+	                            dialog.close($scope.list);
+	                        }
+	                    }
 	                });
-	            };
-
-	            $scope.closeModal = function () {
-	                ngDialog.closeAll();
+	                dialog.closePromise.then(function(data) {
+	                    List.save({}, {
+	                        name: data.value.name,
+	                        description: data.value.description
+	                    }).$promise.then(function(result) {
+	                        $scope.lists.push(result);
+	                    }, function (error) {
+	                        console.log(error);
+	                    });
+	                });
 	            };
 	        }])
 	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
@@ -56159,67 +56201,6 @@
 	            $scope.pageClass = 'page-profile';
 	        }]);
 	};
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	module.exports = function (app) {
-	    return app
-
-	        // API resources
-	        .factory('List', function ($resource) {
-	            return $resource('/api/lists/:list_id',
-	                { list_id: '@list_id' },
-	                {
-	                    'update': { method: 'PUT' }
-	                });
-	        })
-	        .factory('Todo', function ($resource) {
-	            return $resource('/api/todos/:todo_id',
-	                { todo_id: '@todo_id' },
-	                {
-	                    'update': { method: 'PUT' }
-	                });
-	        })
-
-	        // User services
-	        .factory('Login', function ($resource) {
-	            return $resource('/login');
-	        })
-	        .factory('Logout', function ($resource) {
-	            return $resource('/logout');
-	        })
-	        .factory('Signup', function ($resource) {
-	            return $resource('/signup');
-	        })
-	        .factory('User', function ($resource) {
-	            return $resource('/user', {}, {
-	                'query': {
-	                    method: 'GET',
-	                    isArray: false
-	                }
-	            });
-	        })
-	        .factory('Authentication', function ($q, $rootScope, User) {
-	            return {
-	                authenticate: function () {
-	                    if ($rootScope.user) {
-	                        return $q.resolve($rootScope.user);
-	                    } else {
-	                        var user = User.query();
-	                        return user.$promise.then(function(data) {
-	                            $rootScope.user = data;
-	                            return true;
-	                        }, function(error) {
-	                            return $q.reject('Not authenticated');
-	                        });
-	                    }
-	                }
-	            }
-	        });
-	};
-
 
 /***/ }
 /******/ ]);
