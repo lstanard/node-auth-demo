@@ -8,6 +8,8 @@ module.exports = function (app) {
             $scope.lists = List.query(function () {
                 activeListFactory.setActive($scope.lists[0]);
 
+                $scope.currentList = activeListFactory.current;
+
                 // Get todos for each list
                 $scope.lists.forEach(function(list) {
                     list.todos = Todo.query(
@@ -15,6 +17,13 @@ module.exports = function (app) {
                     );
                 });
             });
+
+            // Set active list item
+            $scope.activeList = function (list) {
+                if (list._id === $scope.currentList._id) {
+                    return 'active';
+                }
+            };
 
             $scope.delete = function (list) {
                 var index = _.indexOf($scope.lists, _.find($scope.todoslist, { _id: list._id }));

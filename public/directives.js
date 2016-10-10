@@ -1,5 +1,9 @@
 module.exports = function (app) {
     return app
+
+        // List directives
+
+        // Todo directives
         .directive('todoEdit', function (Todo, activeListFactory) {
             return {
                 scope: false,
