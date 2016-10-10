@@ -6,7 +6,7 @@
                 <div class="todo-sidebar">
                     <h3>Your lists <a href="#" ng-click="openModal()"><span>New list</span></a></h3>
                     <ul>
-                        <li ng-repeat="list in lists" ng-class="activeList(list)">
+                        <li ng-repeat="list in lists" ng-class="activeList(list)" list-activate>
                             <a href="#">
                                 <span class="list-name">{{list.name}}</span>
                                 <span class="list-color"></span>

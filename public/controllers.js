@@ -19,6 +19,7 @@ module.exports = function (app) {
             });
 
             // Set active list item
+            // TODO: Need to watch for when the current list updates
             $scope.activeList = function (list) {
                 if (list._id === $scope.currentList._id) {
                     return 'active';

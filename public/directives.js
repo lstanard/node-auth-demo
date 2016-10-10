@@ -2,6 +2,17 @@ module.exports = function (app) {
     return app
 
         // List directives
+        .directive('listActivate', function (activeListFactory) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attrs) {
+                    elem.find('a').on('click', function(event) {
+                        event.preventDefault();
+                        activeListFactory.setActive(scope.list);
+                    });
+                }
+            };
+        })
 
         // Todo directives
         .directive('todoEdit', function (Todo, activeListFactory) {
