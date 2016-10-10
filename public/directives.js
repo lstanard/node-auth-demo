@@ -1,6 +1,6 @@
 module.exports = function (app) {
     return app
-        .directive('todoEdit', function (Todo) {
+        .directive('todoEdit', function (Todo, activeListFactory) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
@@ -9,7 +9,7 @@ module.exports = function (app) {
                     scope.update = function (todo) {
                         Todo.update(
                             // Find todo by id
-                            { todo_id: todo._id },
+                            { list_id: activeListFactory.current._id, todo_id: todo._id },
                             // Properties to update
                             { todo: todo.text }
                         );
@@ -17,28 +17,29 @@ module.exports = function (app) {
                 }
             }
         })
-        .directive('todoOptions', function (Todo) {
+        .directive('todoOptions', function (Todo, activeListFactory) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
                     scope.delete = function (todo) {
-                        var index = _.indexOf(scope.todos, _.find(scope.todos, { _id: todo._id }));
+                        var index = _.indexOf(activeListFactory.current.todos, _.find(activeListFactory.current.todos, { _id: todo._id }));
 
                         Todo.delete({
+                            list_id: activeListFactory.current._id,
                             todo_id: todo._id
                         }, function () {
-                            scope.todos.splice(index, 1);
+                            activeListFactory.current.todos.splice(index, 1);
                         });
                     }
                 }
             }
         })
-        .directive('toggleComplete', function (Todo) {
+        .directive('toggleComplete', function (Todo, activeListFactory) {
             return {
                 link: function (scope, elem, attrs) {
                     scope.toggleComplete = function (todo) {
                         Todo.update(
-                            { todo_id: todo._id },
+                            { list_id: activeListFactory.current._id, todo_id: todo._id },
                             {
                                 todo: todo.text,
                                 completed: todo.completed

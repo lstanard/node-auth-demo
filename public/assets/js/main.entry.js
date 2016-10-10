@@ -55864,19 +55864,9 @@
 	                        }
 	                    }
 	                })
-	                .when('/lists/:id', {
-	                    templateUrl: 'templates/todos.html',
-	                    controller: 'todoController',
-	                    resolve: {
-	                        'auth': function(Authentication) {
-	                            return Authentication.authenticate();
-	                        }
-	                    }
-	                })
-	                // route for todos page
-	                .when('/todos', {
-	                    templateUrl: 'templates/todos.html',
-	                    controller: 'todoController',
+	                .when('/lists', {
+	                    templateUrl: 'templates/lists.html',
+	                    controller: 'listController',
 	                    resolve: {
 	                        'auth': function(Authentication) {
 	                            return Authentication.authenticate();
@@ -55909,7 +55899,19 @@
 /***/ function(module, exports) {
 
 	module.exports = function (app) {
-	    return app;
+	    return app
+	        .factory('activeListFactory', function () {
+	            return {
+	                current: 0,
+	                setActive: function (list) {
+	                    if (typeof list !== 'undefined') {
+	                        this.current = list;
+	                    } else {
+	                        console.log('Cannot set active list: ' + list);
+	                    }
+	                }
+	            }
+	        });
 	};
 
 /***/ },
@@ -55928,8 +55930,8 @@
 	                });
 	        })
 	        .factory('Todo', function ($resource) {
-	            return $resource('/api/todos/:todo_id',
-	                { todo_id: '@todo_id' },
+	            return $resource('/api/lists/:list_id/todos/:todo_id',
+	                { list_id: '@list_id', todo_id: '@todo_id' },
 	                {
 	                    'update': { method: 'PUT' }
 	                });
@@ -55979,7 +55981,7 @@
 
 	module.exports = function (app) {
 	    return app
-	        .directive('todoEdit', function (Todo) {
+	        .directive('todoEdit', function (Todo, activeListFactory) {
 	            return {
 	                scope: false,
 	                link: function (scope, elem, attrs) {
@@ -55988,7 +55990,7 @@
 	                    scope.update = function (todo) {
 	                        Todo.update(
 	                            // Find todo by id
-	                            { todo_id: todo._id },
+	                            { list_id: activeListFactory.current._id, todo_id: todo._id },
 	                            // Properties to update
 	                            { todo: todo.text }
 	                        );
@@ -55996,28 +55998,29 @@
 	                }
 	            }
 	        })
-	        .directive('todoOptions', function (Todo) {
+	        .directive('todoOptions', function (Todo, activeListFactory) {
 	            return {
 	                scope: false,
 	                link: function (scope, elem, attrs) {
 	                    scope.delete = function (todo) {
-	                        var index = _.indexOf(scope.todos, _.find(scope.todos, { _id: todo._id }));
+	                        var index = _.indexOf(activeListFactory.current.todos, _.find(activeListFactory.current.todos, { _id: todo._id }));
 
 	                        Todo.delete({
+	                            list_id: activeListFactory.current._id,
 	                            todo_id: todo._id
 	                        }, function () {
-	                            scope.todos.splice(index, 1);
+	                            activeListFactory.current.todos.splice(index, 1);
 	                        });
 	                    }
 	                }
 	            }
 	        })
-	        .directive('toggleComplete', function (Todo) {
+	        .directive('toggleComplete', function (Todo, activeListFactory) {
 	            return {
 	                link: function (scope, elem, attrs) {
 	                    scope.toggleComplete = function (todo) {
 	                        Todo.update(
-	                            { todo_id: todo._id },
+	                            { list_id: activeListFactory.current._id, todo_id: todo._id },
 	                            {
 	                                todo: todo.text,
 	                                completed: todo.completed
@@ -56036,12 +56039,19 @@
 	module.exports = function (app) {
 	    return app
 
-	        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
+	        .controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, activeListFactory, ngDialog) {
 	            $scope.user = $rootScope.user;
 
 	            // Get all lists for current user
 	            $scope.lists = List.query(function () {
-	                $rootScope.activeList = $scope.lists[0];
+	                activeListFactory.setActive($scope.lists[0]);
+
+	                // Get todos for each list
+	                $scope.lists.forEach(function(list) {
+	                    list.todos = Todo.query(
+	                        { list_id: list._id }
+	                    );
+	                });
 	            });
 
 	            $scope.delete = function (list) {
@@ -56054,6 +56064,7 @@
 	                });
 	            };
 
+	            // New list dialog/form
 	            $scope.openModal = function () {
 	                var dialog = ngDialog.open({
 	                    template: 'templates/partials/new-list.html',
@@ -56075,34 +56086,21 @@
 	                    });
 	                });
 	            };
-	        }])
-	        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-	            $scope.user = $rootScope.user;
-	            $scope.pageClass = 'page-todos';
-
-	            // Get all todos
-	            if ($rootScope.activeList) {
-	                $scope.todos = Todo.query({
-	                    list_id: $rootScope.activeList._id
-	                });
-	            } else {
-	                console.log('No list currently active');
-	            }
 
 	            // Save new todo
-	            $scope.submit = function () {
+	            $scope.createTodo = function () {
 	                $scope.errors = [];
 
 	                if (!$scope.todo) {
 	                    $scope.errors.push('You need to enter something to do!');
 	                }
 
-	                if ($rootScope.activeList && $scope.todo) {
+	                if (activeListFactory.current && $scope.todo) {
 	                    var todo = Todo.save({}, {
 	                        todo: $scope.todo,
-	                        list_id: $rootScope.activeList._id
+	                        list_id: activeListFactory.current._id
 	                    }).$promise.then(function(result) {
-	                        $scope.todos.push(result);
+	                        activeListFactory.current.todos.push(result);
 	                        $scope.todo = $scope.errors = '';
 	                    }, function (error) {
 	                        console.log(error);
@@ -56111,12 +56109,12 @@
 	                }
 	            };
 	        }])
-
-	        // User controllers
 	        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
 	            $scope.message = 'Welcome!';
 	            $scope.pageClass = 'page-home';
 	        }])
+
+	        // User controllers
 	        .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
 	            $scope.pageClass = 'page-login';
 
@@ -56139,7 +56137,7 @@
 	                    $scope.user = Login.save({}, data).$promise.then(function (result) {
 	                        if (result) {
 	                            $rootScope.user = result.user;
-	                            $location.path('/todos');
+	                            $location.path('/lists');
 	                        } else {
 	                            $scope.error = 'Login failed.'
 	                        }
@@ -56189,7 +56187,7 @@
 	                        firstName: $scope.firstName,
 	                        lastName: $scope.lastName
 	                    }).$promise.then(function () {
-	                        $location.path('/todos');
+	                        $location.path('/profile');
 	                    }, function (error) {
 	                        $scope.error = 'Signup failed';
 	                    });

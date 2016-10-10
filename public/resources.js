@@ -10,8 +10,8 @@ module.exports = function (app) {
                 });
         })
         .factory('Todo', function ($resource) {
-            return $resource('/api/todos/:todo_id',
-                { todo_id: '@todo_id' },
+            return $resource('/api/lists/:list_id/todos/:todo_id',
+                { list_id: '@list_id', todo_id: '@todo_id' },
                 {
                     'update': { method: 'PUT' }
                 });

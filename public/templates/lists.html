@@ -3,13 +3,12 @@
     <div class="inner-body">
         <div class="todo-wrap">
             <div class="container">
-                <div class="todo-sidebar" ng-controller="listController">
+                <div class="todo-sidebar">
                     <h3>Your lists <a href="#" ng-click="openModal()"><span>New list</span></a></h3>
                     <ul>
                         <li ng-repeat="list in lists">
                             <a href="#">
                                 <span class="list-name">{{list.name}}</span>
-                                <a href="#" ng-click="delete(list);">X</a>
                                 <span class="list-color"></span>
                             </a>
                         </li>
@@ -17,7 +16,7 @@
                 </div>
                 <div class="todo-body">
                     <div class="form-wrap">
-                        <form ng-submit="submit()">
+                        <form ng-submit="createTodo()">
                             <div class="form-group">
                                 <label>What do you need to do?</label>
                                 <input type="text" name="todo" ng-model="todo">
@@ -26,7 +25,7 @@
                             <div ng-include="'templates/partials/error.html'"></div>
                         </form>
                     </div>
-                    <ol class="todo-list" ng-include="'templates/partials/todo.html'"></ol>
+                    <ul ng-repeat="list in lists" class="todo-list" ng-include="'templates/partials/todo.html'"></ul>
                 </div>
             </div>
         </div>

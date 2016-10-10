@@ -71,7 +71,7 @@ module.exports = function(app, passport) {
     // get all todos in the database
     app.get('/api/lists/:list_id/todos', isLoggedIn, function(req, res) {
         Todo.find({
-            subdomain: req.user._id
+            subdomain: req.params.list_id
         }).exec(function(err, todos) {
             if (err) {
                 return res.status(500).json(err);
@@ -86,7 +86,7 @@ module.exports = function(app, passport) {
         Todo.create({
             text: req.body.todo,
             completed: false,
-            subdomain: req.user._id
+            subdomain: req.params.list_id
         }, function (err, todo) {
             if (err) {
                 return res.status(500).json(err);

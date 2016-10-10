@@ -1,12 +1,19 @@
 module.exports = function (app) {
     return app
 
-        .controller('listController', ['$scope', '$rootScope', 'List', 'ngDialog', function ($scope, $rootScope, List, ngDialog) {
+        .controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, activeListFactory, ngDialog) {
             $scope.user = $rootScope.user;
 
             // Get all lists for current user
             $scope.lists = List.query(function () {
-                $rootScope.activeList = $scope.lists[0];
+                activeListFactory.setActive($scope.lists[0]);
+
+                // Get todos for each list
+                $scope.lists.forEach(function(list) {
+                    list.todos = Todo.query(
+                        { list_id: list._id }
+                    );
+                });
             });
 
             $scope.delete = function (list) {
@@ -19,6 +26,7 @@ module.exports = function (app) {
                 });
             };
 
+            // New list dialog/form
             $scope.openModal = function () {
                 var dialog = ngDialog.open({
                     template: 'templates/partials/new-list.html',
@@ -40,34 +48,21 @@ module.exports = function (app) {
                     });
                 });
             };
-        }])
-        .controller('todoController', ['$scope', '$rootScope', 'Todo', function ($scope, $rootScope, Todo) {
-            $scope.user = $rootScope.user;
-            $scope.pageClass = 'page-todos';
-
-            // Get all todos
-            if ($rootScope.activeList) {
-                $scope.todos = Todo.query({
-                    list_id: $rootScope.activeList._id
-                });
-            } else {
-                console.log('No list currently active');
-            }
 
             // Save new todo
-            $scope.submit = function () {
+            $scope.createTodo = function () {
                 $scope.errors = [];
 
                 if (!$scope.todo) {
                     $scope.errors.push('You need to enter something to do!');
                 }
 
-                if ($rootScope.activeList && $scope.todo) {
+                if (activeListFactory.current && $scope.todo) {
                     var todo = Todo.save({}, {
                         todo: $scope.todo,
-                        list_id: $rootScope.activeList._id
+                        list_id: activeListFactory.current._id
                     }).$promise.then(function(result) {
-                        $scope.todos.push(result);
+                        activeListFactory.current.todos.push(result);
                         $scope.todo = $scope.errors = '';
                     }, function (error) {
                         console.log(error);
@@ -76,12 +71,12 @@ module.exports = function (app) {
                 }
             };
         }])
-
-        // User controllers
         .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
             $scope.message = 'Welcome!';
             $scope.pageClass = 'page-home';
         }])
+
+        // User controllers
         .controller('loginController', ['$scope', '$rootScope', '$location', 'Login', function ($scope, $rootScope, $location, Login) {
             $scope.pageClass = 'page-login';
 
@@ -104,7 +99,7 @@ module.exports = function (app) {
                     $scope.user = Login.save({}, data).$promise.then(function (result) {
                         if (result) {
                             $rootScope.user = result.user;
-                            $location.path('/todos');
+                            $location.path('/lists');
                         } else {
                             $scope.error = 'Login failed.'
                         }
@@ -154,7 +149,7 @@ module.exports = function (app) {
                         firstName: $scope.firstName,
                         lastName: $scope.lastName
                     }).$promise.then(function () {
-                        $location.path('/todos');
+                        $location.path('/profile');
                     }, function (error) {
                         $scope.error = 'Signup failed';
                     });
