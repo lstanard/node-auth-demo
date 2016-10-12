@@ -1,6 +1,8 @@
 node_modules
 config/auth.js
 *.log
+*.css.map
+*.js.map
 
 # Ignore all icons, then add back in as needed
 public/icons/*.svg

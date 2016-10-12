@@ -28,6 +28,8 @@ module.exports = {
 		path: __dirname + '/public/assets/js/',
 		filename: "[name].entry.js"
 	},
+	debug: true,
+	devtool: 'source-map',
 	module: {
 		loaders: loaders
 	},
