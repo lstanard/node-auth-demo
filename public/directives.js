@@ -2,20 +2,22 @@ module.exports = function (app) {
     return app
 
         // List directives
-        .directive('listActivate', function (activeListFactory) {
+        .directive('listActivate', function ($rootScope, activeListFactory) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
                     elem.find('a').on('click', function(event) {
                         event.preventDefault();
-                        activeListFactory.setActive(scope.list);
+                        elem.parent().children().removeClass('active');
+                        elem.addClass('active');
+                        activeListFactory.setActive(scope.list._id);
                     });
                 }
             };
         })
 
         // Todo directives
-        .directive('todoEdit', function (Todo, activeListFactory) {
+        .directive('todoEdit', function ($rootScope, Todo) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
@@ -24,7 +26,7 @@ module.exports = function (app) {
                     scope.update = function (todo) {
                         Todo.update(
                             // Find todo by id
-                            { list_id: activeListFactory.current._id, todo_id: todo._id },
+                            { list_id: $rootScope.activeListId, todo_id: todo._id },
                             // Properties to update
                             { todo: todo.text }
                         );
@@ -32,29 +34,33 @@ module.exports = function (app) {
                 }
             }
         })
-        .directive('todoOptions', function (Todo, activeListFactory) {
+        .directive('todoOptions', function ($rootScope, Todo) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
                     scope.delete = function (todo) {
-                        var index = _.indexOf(activeListFactory.current.todos, _.find(activeListFactory.current.todos, { _id: todo._id }));
+                        var listIndex = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: $rootScope.activeListId }));
+                        console.log(listIndex);
+                        var index = _.indexOf($rootScope.lists[listIndex].todos, _.find($rootScope.lists[listIndex].todos, { _id: todo._id }));
+                        console.log(index);
 
                         Todo.delete({
-                            list_id: activeListFactory.current._id,
+                            list_id: $rootScope.activeListId,
                             todo_id: todo._id
                         }, function () {
-                            activeListFactory.current.todos.splice(index, 1);
+                            // TODO: Fix - it's removing from the wrong list on the front-end
+                            $rootScope.lists[listIndex].todos.splice(index, 1);
                         });
                     }
                 }
             }
         })
-        .directive('toggleComplete', function (Todo, activeListFactory) {
+        .directive('toggleComplete', function ($rootScope, Todo) {
             return {
                 link: function (scope, elem, attrs) {
                     scope.toggleComplete = function (todo) {
                         Todo.update(
-                            { list_id: activeListFactory.current._id, todo_id: todo._id },
+                            { list_id: $rootScope.activeListId, todo_id: todo._id },
                             {
                                 todo: todo.text,
                                 completed: todo.completed

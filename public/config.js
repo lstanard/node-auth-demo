@@ -36,6 +36,7 @@ module.exports = function (app) {
                 .when('/lists', {
                     templateUrl: 'templates/lists.html',
                     controller: 'listController',
+                    reloadOnSearch: false,
                     resolve: {
                         'auth': function(Authentication) {
                             return Authentication.authenticate();
@@ -53,10 +54,11 @@ module.exports = function (app) {
 
             // Set global application name
             $rootScope.appTitle = 'todo\'r';
+            $rootScope.lists = [];
 
             $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
                 if (rejection === 'Not authenticated') {
-                    $location.path('/');
+                    $location.path('/login');
                 }
             });
         });

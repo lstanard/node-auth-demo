@@ -1,39 +1,24 @@
 module.exports = function (app) {
     return app
 
-        .controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, activeListFactory, ngDialog) {
+        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
+            $scope.message = 'Welcome!';
+            $scope.pageClass = 'page-home';
+        }])
+
+        .controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, userListFactory, activeListFactory, ngDialog) {
+            // Set current user
             $scope.user = $rootScope.user;
 
-            // Get all lists for current user
-            $scope.lists = List.query(function () {
-                activeListFactory.setActive($scope.lists[0]);
+            // Get all lists for current user - assigned to $rootScope.lists
+            userListFactory.getLists();
 
-                $scope.currentList = activeListFactory.current;
+            // Set active list from url, or first by default
+            activeListFactory.setActive();
 
-                // Get todos for each list
-                $scope.lists.forEach(function(list) {
-                    list.todos = Todo.query(
-                        { list_id: list._id }
-                    );
-                });
-            });
-
-            // Set active list item
-            // TODO: Need to watch for when the current list updates
-            $scope.activeList = function (list) {
-                if (list._id === $scope.currentList._id) {
-                    return 'active';
-                }
-            };
-
-            $scope.delete = function (list) {
-                var index = _.indexOf($scope.lists, _.find($scope.todoslist, { _id: list._id }));
-
-                List.delete({
-                    list_id: list._id
-                }, function () {
-                    $scope.lists.splice(index, 1);
-                });
+            // List management functions
+            $scope.delete = function(list) {
+                userListFactory.removeList(list);
             };
 
             // New list dialog/form
@@ -48,17 +33,11 @@ module.exports = function (app) {
                     }
                 });
                 dialog.closePromise.then(function(data) {
-                    List.save({}, {
-                        name: data.value.name,
-                        description: data.value.description
-                    }).$promise.then(function(result) {
-                        $scope.lists.push(result);
-                    }, function (error) {
-                        console.log(error);
-                    });
+                    userListFactory.addList(data);
                 });
             };
 
+            // TODO: Refactor into factory
             // Save new todo
             $scope.createTodo = function () {
                 $scope.errors = [];
@@ -67,12 +46,15 @@ module.exports = function (app) {
                     $scope.errors.push('You need to enter something to do!');
                 }
 
-                if (activeListFactory.current && $scope.todo) {
+                if ($rootScope.activeListId && $scope.todo) {
                     var todo = Todo.save({}, {
                         todo: $scope.todo,
-                        list_id: activeListFactory.current._id
+                        list_id: $rootScope.activeListId
                     }).$promise.then(function(result) {
-                        activeListFactory.current.todos.push(result);
+                        var listIndex = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: $rootScope.activeListId }));
+                        // TODO: This is broken - if you create a new list and immediately start
+                        // adding to it, it says cannot push to undefined
+                        $rootScope.lists[listIndex].todos.push(result);
                         $scope.todo = $scope.errors = '';
                     }, function (error) {
                         console.log(error);
@@ -80,10 +62,6 @@ module.exports = function (app) {
                     });
                 }
             };
-        }])
-        .controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
-            $scope.message = 'Welcome!';
-            $scope.pageClass = 'page-home';
         }])
 
         // User controllers
