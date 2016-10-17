@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "webpack --colors --watch",
     "build": "webpack --progress --colors",
-    "start": "webpack && nodemon server.js"
+    "start": "npm install && webpack && nodemon server.js"
   },
   "dependencies": {
     "angular": "^1.5.8",
