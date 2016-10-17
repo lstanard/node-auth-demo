@@ -55908,10 +55908,11 @@
 	
 	        return {
 	            setActiveList: function setActiveList(list) {
+	                // 1) Set active list by query param
+	                // 2) Set active list by list resource passed in, change URL to reflect new active list
+	
 	                var search = $location.search();
 	
-	                // 1) Set active list by query param
-	                // 2) Set active list by list resource passed in
 	                if (search.list_id) {
 	                    var listResource = _.find(userLists, { _id: list._id });
 	                    if (listResource) {
@@ -55919,6 +55920,7 @@
 	                    }
 	                } else if (typeof list !== 'undefined') {
 	                    activeListResource = list;
+	                    $location.search('list_id', activeListResource._id);
 	                }
 	            },
 	            getActiveList: function getActiveList() {
@@ -56063,13 +56065,18 @@
 	        return {
 	            restrict: 'A',
 	            link: function link(scope, elem, attrs) {
-	                var activeListResource = listFactory.getActiveList();
+	                listFactory.getActiveList().then(function (list) {
+	                    if (scope.list._id === list._id) {
+	                        elem.parent().children().removeClass('active');
+	                        elem.addClass('active');
+	                    }
+	                });
 	
 	                elem.find('a').on('click', function (event) {
 	                    event.preventDefault();
-	                    // elem.parent().children().removeClass('active');
-	                    // elem.addClass('active');
-	                    // activeListFactory.setActive(scope.list._id);
+	                    elem.parent().children().removeClass('active');
+	                    elem.addClass('active');
+	                    listFactory.setActiveList(scope);
 	                });
 	            }
 	        };

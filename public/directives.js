@@ -6,13 +6,18 @@ module.exports = function (app) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
-                    var activeListResource = listFactory.getActiveList();
+                    listFactory.getActiveList().then(function(list) {
+                        if (scope.list._id === list._id) {
+                            elem.parent().children().removeClass('active');
+                            elem.addClass('active');
+                        }
+                    });
 
                     elem.find('a').on('click', function(event) {
                         event.preventDefault();
-                        // elem.parent().children().removeClass('active');
-                        // elem.addClass('active');
-                        // activeListFactory.setActive(scope.list._id);
+                        elem.parent().children().removeClass('active');
+                        elem.addClass('active');
+                        listFactory.setActiveList(scope);
                     });
                 }
             };

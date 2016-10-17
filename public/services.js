@@ -7,10 +7,11 @@ module.exports = function (app) {
 
             return {
                 setActiveList: function (list) {
+                    // 1) Set active list by query param
+                    // 2) Set active list by list resource passed in, change URL to reflect new active list
+
                     var search = $location.search();
 
-                    // 1) Set active list by query param
-                    // 2) Set active list by list resource passed in
                     if (search.list_id) {
                         var listResource = _.find(userLists, { _id: list._id });
                         if (listResource) {
@@ -18,6 +19,7 @@ module.exports = function (app) {
                         }
                     } else if (typeof list !== 'undefined') {
                         activeListResource = list;
+                        $location.search('list_id', activeListResource._id);
                     }
                 },
                 getActiveList: function () {
