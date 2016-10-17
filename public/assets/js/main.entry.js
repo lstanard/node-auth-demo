@@ -55907,28 +55907,35 @@
 	
 	        return {
 	            addList: function addList(data) {
-	                if (data.value.name) {
-	                    List.save({}, {
-	                        name: data.value.name,
-	                        description: data.value.description
-	                    }).$promise.then(function (result) {
-	                        console.log(result);
-	                        userLists.push(result);
-	                        return result;
-	                    }, function (error) {
-	                        console.log(error);
-	                    });
-	                }
+	                return new Promise(function (resolve, reject) {
+	                    if (data.value.name) {
+	                        List.save({}, {
+	                            name: data.value.name,
+	                            description: data.value.description
+	                        }).$promise.then(function (result) {
+	                            userLists.push(result);
+	                            resolve(userLists);
+	                        }, function (error) {
+	                            reject(error);
+	                        });
+	                    } else {
+	                        reject('Must provide a list name.');
+	                    }
+	                });
 	            },
 	            getLists: function getLists() {
-	                if (!userLists) {
-	                    List.query().$promise.then(function (lists) {
-	                        userLists = lists;
-	                    });
-	                    return List.query();
-	                } else {
-	                    return userLists;
-	                }
+	                return new Promise(function (resolve, reject) {
+	                    if (!userLists) {
+	                        List.query().$promise.then(function (lists) {
+	                            userLists = lists;
+	                            resolve(lists);
+	                        }, function (error) {
+	                            reject(error);
+	                        });
+	                    } else {
+	                        resolve(userLists);
+	                    }
+	                });
 	            }
 	        };
 	
@@ -56013,24 +56020,6 @@
 	        };
 	    }).factory('userListFactory', function ($rootScope, List, Todo, activeListFactory, listFactory) {
 	        var factory = {};
-	
-	        factory.getLists = function () {
-	            var self = factory;
-	
-	            if (_.isEmpty($rootScope.lists)) {
-	                List.query(function (lists) {
-	                    if (lists.length > 0) {
-	                        lists.forEach(function (list) {
-	                            list.todos = Todo.query({ list_id: list._id });
-	                        });
-	
-	                        $rootScope.lists = lists;
-	                    } else {
-	                        return;
-	                    }
-	                });
-	            }
-	        };
 	
 	        factory.removeList = function (list) {
 	            var index = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: list._id }));
@@ -56192,12 +56181,12 @@
 	        // Set current user
 	        $scope.user = $rootScope.user;
 	
-	        $scope.getLists = function () {
-	            listFactory.getLists().$promise.then(function (lists) {
-	                $scope.lists = lists;
-	            });
-	        };
-	        $scope.getLists();
+	        // Get user lists
+	        listFactory.getLists().then(function (lists) {
+	            $scope.lists = lists;
+	        }, function (error) {
+	            console.log(error);
+	        });
 	
 	        // New list dialog/form
 	        $scope.openModal = function () {
@@ -56211,8 +56200,11 @@
 	                }
 	            });
 	            dialog.closePromise.then(function (data) {
-	                // Use a promise here
-	                $scope.lists = $scope.lists.push(listFactory.addList(data));
+	                listFactory.addList(data).then(function (lists) {
+	                    $scope.lists = lists;
+	                }, function (error) {
+	                    console.log(error);
+	                });
 	            });
 	        };
 	

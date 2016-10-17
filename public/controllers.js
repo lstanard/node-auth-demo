@@ -9,13 +9,13 @@ module.exports = function (app) {
         .controller('listController', ['$scope', '$rootScope', '$interval', 'List', 'Todo', 'listFactory', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, $interval, List, Todo, listFactory, userListFactory, activeListFactory, ngDialog) {
             // Set current user
             $scope.user = $rootScope.user;
-
-            $scope.getLists = function () {
-                listFactory.getLists().$promise.then(function(lists) {
-                    $scope.lists = lists;
-                });
-            };
-            $scope.getLists();
+            
+            // Get user lists
+            listFactory.getLists().then(function(lists) {
+                $scope.lists = lists;
+            }, function (error) {
+                console.log(error);
+            });
 
             // New list dialog/form
             $scope.openModal = function () {
@@ -29,8 +29,11 @@ module.exports = function (app) {
                     }
                 });
                 dialog.closePromise.then(function(data) {
-                    // Use a promise here
-                    $scope.lists = $scope.lists.push(listFactory.addList(data));
+                    listFactory.addList(data).then(function(lists) {
+                        $scope.lists = lists;
+                    }, function (error) {
+                        console.log(error);
+                    });
                 });
             };
 

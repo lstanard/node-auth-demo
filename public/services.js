@@ -6,28 +6,36 @@ module.exports = function (app) {
 
             return {
                 addList: function(data) {
-                    if (data.value.name) {
-                        List.save({}, {
-                            name: data.value.name,
-                            description: data.value.description
-                        }).$promise.then(function(result) {
-                            console.log(result);
-                            userLists.push(result);
-                            return result;
-                        }, function (error) {
-                            console.log(error);
-                        });
-                    }
+                    return new Promise(function(resolve, reject) {
+                        if (data.value.name) {
+                            List.save({}, {
+                                name: data.value.name,
+                                description: data.value.description
+                            }).$promise.then(function(result) {
+                                userLists.push(result);
+                                resolve(userLists);
+                            }, function(error) {
+                                reject(error);
+                            });
+                        } else {
+                            reject('Must provide a list name.');
+                        }
+                    });
                 },
                 getLists: function () {
-                    if (!userLists) {
-                        List.query().$promise.then(function(lists) {
-                            userLists = lists;
-                        });
-                        return List.query();
-                    } else {
-                        return userLists;
-                    }
+                    return new Promise(function(resolve, reject) {
+                        if (!userLists) {
+                            List.query().$promise
+                                .then(function(lists) {
+                                    userLists = lists;
+                                    resolve(lists);
+                                }, function (error) {
+                                    reject(error);
+                                });
+                        } else {
+                            resolve(userLists);
+                        }
+                    });
                 }
             }
 
@@ -116,26 +124,6 @@ module.exports = function (app) {
         })
         .factory('userListFactory', function ($rootScope, List, Todo, activeListFactory, listFactory) {
             var factory = {};
-
-            factory.getLists = function () {
-                var self = factory;
-
-                if (_.isEmpty($rootScope.lists)) {
-                    List.query(function (lists) {
-                        if (lists.length > 0) {
-                            lists.forEach(function(list) {
-                                list.todos = Todo.query(
-                                    { list_id: list._id }
-                                );
-                            });
-
-                            $rootScope.lists = lists;
-                        } else {
-                            return;
-                        }
-                    });
-                }
-            };
 
             factory.removeList = function (list) {
                 var index = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: list._id }));
