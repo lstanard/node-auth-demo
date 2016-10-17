@@ -55902,13 +55902,86 @@
 	'use strict';
 	
 	module.exports = function (app) {
-	    return app.factory('activeListFactory', function ($rootScope, $location) {
+	    return app.factory('listFactory', function ($rootScope, $location, List, Todo) {
+	        var userLists = undefined;
+	
 	        return {
+	            addList: function addList(data) {
+	                if (data.value.name) {
+	                    List.save({}, {
+	                        name: data.value.name,
+	                        description: data.value.description
+	                    }).$promise.then(function (result) {
+	                        console.log(result);
+	                        userLists.push(result);
+	                        return result;
+	                    }, function (error) {
+	                        console.log(error);
+	                    });
+	                }
+	            },
+	            getLists: function getLists() {
+	                if (!userLists) {
+	                    List.query().$promise.then(function (lists) {
+	                        userLists = lists;
+	                    });
+	                    return List.query();
+	                } else {
+	                    return userLists;
+	                }
+	            }
+	        };
+	
+	        // return {
+	        //     activeListIndex: 0,
+	        //     setActiveList: function (listId) {
+	        //         var search = $location.search();
+	
+	        //         // If user currently has lists
+	        //         if (this.userLists.length > 0) {
+	        //             if (typeof listId === 'undefined' && search.list_id) {
+	        //                 var index = _.indexOf(this.userLists, _.find(this.userLists, { _id: search.list_id }));
+	        //                 this.activeListIndex = index;
+	        //             }
+	        //         }
+	        //     },
+	        //     getUserLists: function () {
+	        //         var self = this;
+	        //         // Get all lists for current user
+	        //         if (userLists.length === 0) {
+	        //             List.query(function (lists) {
+	        //                 if (lists.length > 0) {
+	        //                     lists.forEach(function(list) {
+	        //                         list.todos = Todo.query(
+	        //                             { list_id: list._id }
+	        //                         );
+	        //                     });
+	        //                     self.userLists = lists;
+	        //                     console.log('Get lists for the first time');
+	        //                     console.log(self.userLists);
+	        //                     return self.userLists;
+	        //                 }
+	        //             });
+	        //         } else {
+	        //             console.log('Return lists already retrieved');
+	        //             console.log(this.userLists);
+	        //             return this.userLists;
+	        //         }
+	        //     }
+	        // }
+	    }).factory('activeListFactory', function ($rootScope, $location) {
+	        return {
+	            activeList: 0,
 	            setActive: function setActive(listId) {
 	                var search = $location.search();
 	
 	                // assume first that listId and search.list_id are null
 	                //      - no active lists = either there are no lists, or an active list hasn't been set yet
+	                if (typeof listId === 'undefined' && !search.list_id) {
+	                    console.log('No active list');
+	                } else if (typeof listId === 'undefined' && search.list_id) {}
+	                // this.activeList =
+	
 	
 	                // no listid being passed in, list_id is in the url
 	                if (typeof listId === 'undefined' && search.list_id) {
@@ -55925,8 +55998,6 @@
 	                    else if ($rootScope.activeListId == 0 && typeof listId === 'undefined' && !search.list_id && $rootScope.lists) {
 	                            console.log('condition 3');
 	                            $rootScope.activeListId = $rootScope.lists[0];
-	                        } else {
-	                            console.log('Cannot set active list');
 	                        }
 	
 	                // if (search.list_id && typeof listId === 'undefined') {
@@ -55940,7 +56011,7 @@
 	                // }
 	            }
 	        };
-	    }).factory('userListFactory', function ($rootScope, List, Todo, activeListFactory) {
+	    }).factory('userListFactory', function ($rootScope, List, Todo, activeListFactory, listFactory) {
 	        var factory = {};
 	
 	        factory.getLists = function () {
@@ -55968,19 +56039,6 @@
 	                    list_id: list._id
 	                }, function () {
 	                    $rootScope.lists.splice(index, 1);
-	                });
-	            }
-	        };
-	
-	        factory.addList = function (data) {
-	            if (data.value.name) {
-	                List.save({}, {
-	                    name: data.value.name,
-	                    description: data.value.description
-	                }).$promise.then(function (result) {
-	                    $rootScope.lists.push(result);
-	                }, function (error) {
-	                    console.log(error);
 	                });
 	            }
 	        };
@@ -56130,20 +56188,16 @@
 	    return app.controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
 	        $scope.message = 'Welcome!';
 	        $scope.pageClass = 'page-home';
-	    }]).controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, userListFactory, activeListFactory, ngDialog) {
+	    }]).controller('listController', ['$scope', '$rootScope', '$interval', 'List', 'Todo', 'listFactory', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, $interval, List, Todo, listFactory, userListFactory, activeListFactory, ngDialog) {
 	        // Set current user
 	        $scope.user = $rootScope.user;
 	
-	        // Get all lists for current user - assigned to $rootScope.lists
-	        userListFactory.getLists();
-	
-	        // Set active list from url, or first by default
-	        activeListFactory.setActive();
-	
-	        // List management functions
-	        $scope.delete = function (list) {
-	            userListFactory.removeList(list);
+	        $scope.getLists = function () {
+	            listFactory.getLists().$promise.then(function (lists) {
+	                $scope.lists = lists;
+	            });
 	        };
+	        $scope.getLists();
 	
 	        // New list dialog/form
 	        $scope.openModal = function () {
@@ -56157,8 +56211,13 @@
 	                }
 	            });
 	            dialog.closePromise.then(function (data) {
-	                userListFactory.addList(data);
+	                // Use a promise here
+	                $scope.lists = $scope.lists.push(listFactory.addList(data));
 	            });
+	        };
+	
+	        $scope.delete = function (list) {
+	            userListFactory.removeList(list);
 	        };
 	
 	        // TODO: Refactor into factory

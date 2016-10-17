@@ -40,7 +40,7 @@ module.exports = function(app, passport) {
         }, {
             name: req.body.name,
             completed: req.body.description
-        }, { new: true }, function (err, todo) {
+        }, { new: true }, function (err, list) {
             if (err) {
                 return res.status(500).json(err);
             }

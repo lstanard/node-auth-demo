@@ -6,20 +6,16 @@ module.exports = function (app) {
             $scope.pageClass = 'page-home';
         }])
 
-        .controller('listController', ['$scope', '$rootScope', 'List', 'Todo', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, List, Todo, userListFactory, activeListFactory, ngDialog) {
+        .controller('listController', ['$scope', '$rootScope', '$interval', 'List', 'Todo', 'listFactory', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, $interval, List, Todo, listFactory, userListFactory, activeListFactory, ngDialog) {
             // Set current user
             $scope.user = $rootScope.user;
 
-            // Get all lists for current user - assigned to $rootScope.lists
-            userListFactory.getLists();
-
-            // Set active list from url, or first by default
-            activeListFactory.setActive();
-
-            // List management functions
-            $scope.delete = function(list) {
-                userListFactory.removeList(list);
+            $scope.getLists = function () {
+                listFactory.getLists().$promise.then(function(lists) {
+                    $scope.lists = lists;
+                });
             };
+            $scope.getLists();
 
             // New list dialog/form
             $scope.openModal = function () {
@@ -33,8 +29,13 @@ module.exports = function (app) {
                     }
                 });
                 dialog.closePromise.then(function(data) {
-                    userListFactory.addList(data);
+                    // Use a promise here
+                    $scope.lists = $scope.lists.push(listFactory.addList(data));
                 });
+            };
+
+            $scope.delete = function(list) {
+                userListFactory.removeList(list);
             };
 
             // TODO: Refactor into factory
