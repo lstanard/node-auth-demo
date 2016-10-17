@@ -55904,8 +55904,32 @@
 	module.exports = function (app) {
 	    return app.factory('listFactory', function ($rootScope, $location, List, Todo) {
 	        var userLists = undefined;
+	        var activeListResource = undefined;
 	
 	        return {
+	            setActiveList: function setActiveList(list) {
+	                var search = $location.search();
+	
+	                // 1) Set active list by query param
+	                // 2) Set active list by list resource passed in
+	                if (search.list_id) {
+	                    var listResource = _.find(userLists, { _id: list._id });
+	                    if (listResource) {
+	                        activeListResource = listResource;
+	                    }
+	                } else if (typeof list !== 'undefined') {
+	                    activeListResource = list;
+	                }
+	            },
+	            getActiveList: function getActiveList() {
+	                return new Promise(function (resolve, reject) {
+	                    if (typeof activeListResource !== 'undefined') {
+	                        resolve(activeListResource);
+	                    } else {
+	                        reject('No active list found');
+	                    }
+	                });
+	            },
 	            addList: function addList(data) {
 	                return new Promise(function (resolve, reject) {
 	                    if (data.value.name) {
@@ -55938,12 +55962,28 @@
 	                    }
 	                });
 	            },
+	            updateList: function updateList(list) {
+	                return new Promise(function (resolve, reject) {
+	                    if (typeof list !== 'undefined') {
+	                        // TODO: add logic for updating lists
+	                    } else {
+	                        reject('List is undefined');
+	                    }
+	                });
+	            },
 	            getLists: function getLists() {
 	                return new Promise(function (resolve, reject) {
 	                    if (!userLists) {
 	                        List.query().$promise.then(function (lists) {
-	                            userLists = lists;
-	                            resolve(lists);
+	                            if (lists.length > 0) {
+	                                lists.forEach(function (list) {
+	                                    list.todos = Todo.query({ list_id: list._id });
+	                                });
+	                                userLists = lists;
+	                                resolve(lists);
+	                            } else {
+	                                reject('No lists found');
+	                            }
 	                        }, function (error) {
 	                            reject(error);
 	                        });
@@ -55953,94 +55993,6 @@
 	                });
 	            }
 	        };
-	
-	        // return {
-	        //     activeListIndex: 0,
-	        //     setActiveList: function (listId) {
-	        //         var search = $location.search();
-	
-	        //         // If user currently has lists
-	        //         if (this.userLists.length > 0) {
-	        //             if (typeof listId === 'undefined' && search.list_id) {
-	        //                 var index = _.indexOf(this.userLists, _.find(this.userLists, { _id: search.list_id }));
-	        //                 this.activeListIndex = index;
-	        //             }
-	        //         }
-	        //     },
-	        //     getUserLists: function () {
-	        //         var self = this;
-	        //         // Get all lists for current user
-	        //         if (userLists.length === 0) {
-	        //             List.query(function (lists) {
-	        //                 if (lists.length > 0) {
-	        //                     lists.forEach(function(list) {
-	        //                         list.todos = Todo.query(
-	        //                             { list_id: list._id }
-	        //                         );
-	        //                     });
-	        //                     self.userLists = lists;
-	        //                     console.log('Get lists for the first time');
-	        //                     console.log(self.userLists);
-	        //                     return self.userLists;
-	        //                 }
-	        //             });
-	        //         } else {
-	        //             console.log('Return lists already retrieved');
-	        //             console.log(this.userLists);
-	        //             return this.userLists;
-	        //         }
-	        //     }
-	        // }
-	    }).factory('activeListFactory', function ($rootScope, $location) {
-	        return {
-	            activeList: 0,
-	            setActive: function setActive(listId) {
-	                var search = $location.search();
-	
-	                // assume first that listId and search.list_id are null
-	                //      - no active lists = either there are no lists, or an active list hasn't been set yet
-	                if (typeof listId === 'undefined' && !search.list_id) {
-	                    console.log('No active list');
-	                } else if (typeof listId === 'undefined' && search.list_id) {}
-	                // this.activeList =
-	
-	
-	                // no listid being passed in, list_id is in the url
-	                if (typeof listId === 'undefined' && search.list_id) {
-	                    console.log('condition 1');
-	                    $rootScope.activeListId = search.list_id;
-	                }
-	                // list_id is in the url, but we want to change it from a click
-	                else if (search.list_id && listId !== search.list_id) {
-	                        console.log('condition 2');
-	                        $rootScope.activeListId = listId;
-	                        $location.search('list_id', listId);
-	                    }
-	                    // fallback = no active list id, no listid being passed in, no list_id in the url -> make first list active
-	                    else if ($rootScope.activeListId == 0 && typeof listId === 'undefined' && !search.list_id && $rootScope.lists) {
-	                            console.log('condition 3');
-	                            $rootScope.activeListId = $rootScope.lists[0];
-	                        }
-	
-	                // if (search.list_id && typeof listId === 'undefined') {
-	                //     console.log('load list from url');
-	                //     $rootScope.activeListId = search.list_id;
-	                // } else if (typeof listId !== 'undefined' && listId) {
-	                //     $rootScope.activeListId = listId;
-	                //     $location.path('/lists').search({ 'list_id': listId });
-	                // } else {
-	                //     console.log('Cannot set active list');
-	                // }
-	            }
-	        };
-	    }).factory('userListFactory', function ($rootScope, List, Todo, activeListFactory, listFactory) {
-	        var factory = {};
-	
-	        factory.updateList = function () {
-	            // add update list
-	        };
-	
-	        return factory;
 	    });
 	};
 
@@ -56107,7 +56059,7 @@
 	    return app
 	
 	    // List directives
-	    .directive('listActivate', function ($rootScope, activeListFactory) {
+	    .directive('listActivate', function ($rootScope, listFactory) {
 	        return {
 	            restrict: 'A',
 	            link: function link(scope, elem, attrs) {
@@ -56115,14 +56067,14 @@
 	                    event.preventDefault();
 	                    elem.parent().children().removeClass('active');
 	                    elem.addClass('active');
-	                    activeListFactory.setActive(scope.list._id);
+	                    // activeListFactory.setActive(scope.list._id);
 	                });
 	            }
 	        };
 	    })
 	
 	    // Todo directives
-	    .directive('todoEdit', function ($rootScope, Todo) {
+	    .directive('todoEdit', function ($rootScope, Todo, listFactory) {
 	        return {
 	            scope: false,
 	            link: function link(scope, elem, attrs) {
@@ -56137,7 +56089,7 @@
 	                };
 	            }
 	        };
-	    }).directive('todoOptions', function ($rootScope, Todo) {
+	    }).directive('todoOptions', function ($rootScope, Todo, listFactory) {
 	        return {
 	            scope: false,
 	            link: function link(scope, elem, attrs) {
@@ -56157,7 +56109,7 @@
 	                };
 	            }
 	        };
-	    }).directive('toggleComplete', function ($rootScope, Todo) {
+	    }).directive('toggleComplete', function ($rootScope, Todo, listFactory) {
 	        return {
 	            link: function link(scope, elem, attrs) {
 	                scope.toggleComplete = function (todo) {
@@ -56181,13 +56133,14 @@
 	    return app.controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
 	        $scope.message = 'Welcome!';
 	        $scope.pageClass = 'page-home';
-	    }]).controller('listController', ['$scope', '$rootScope', '$interval', 'List', 'Todo', 'listFactory', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, $interval, List, Todo, listFactory, userListFactory, activeListFactory, ngDialog) {
+	    }]).controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, ngDialog) {
 	        // Set current user
 	        $scope.user = $rootScope.user;
 	
 	        // Get user lists
 	        listFactory.getLists().then(function (lists) {
 	            $scope.lists = lists;
+	            listFactory.setActiveList($scope.lists[0]);
 	        }, function (error) {
 	            console.log(error);
 	        });
@@ -56230,19 +56183,20 @@
 	                $scope.errors.push('You need to enter something to do!');
 	            }
 	
-	            if ($rootScope.activeListId && $scope.todo) {
-	                var todo = Todo.save({}, {
-	                    todo: $scope.todo,
-	                    list_id: $rootScope.activeListId
-	                }).$promise.then(function (result) {
-	                    var listIndex = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: $rootScope.activeListId }));
-	                    // TODO: This is broken - if you create a new list and immediately start
-	                    // adding to it, it says cannot push to undefined
-	                    $rootScope.lists[listIndex].todos.push(result);
-	                    $scope.todo = $scope.errors = '';
+	            if ($scope.todo) {
+	                var activeList = listFactory.getActiveList().then(function (list) {
+	                    var todo = Todo.save({}, {
+	                        todo: $scope.todo,
+	                        list_id: list._id
+	                    }).$promise.then(function (result) {
+	                        list.todos.push(result);
+	                        $scope.todo = $scope.errors = '';
+	                    }, function (error) {
+	                        console.log(error);
+	                        $scope.error = 'Something went wrong';
+	                    });
 	                }, function (error) {
 	                    console.log(error);
-	                    $scope.error = 'Something went wrong';
 	                });
 	            }
 	        };

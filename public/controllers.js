@@ -6,13 +6,14 @@ module.exports = function (app) {
             $scope.pageClass = 'page-home';
         }])
 
-        .controller('listController', ['$scope', '$rootScope', '$interval', 'List', 'Todo', 'listFactory', 'userListFactory', 'activeListFactory', 'ngDialog', function ($scope, $rootScope, $interval, List, Todo, listFactory, userListFactory, activeListFactory, ngDialog) {
+        .controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, ngDialog) {
             // Set current user
             $scope.user = $rootScope.user;
             
             // Get user lists
             listFactory.getLists().then(function(lists) {
                 $scope.lists = lists;
+                listFactory.setActiveList($scope.lists[0]);
             }, function (error) {
                 console.log(error);
             });
@@ -57,20 +58,22 @@ module.exports = function (app) {
                     $scope.errors.push('You need to enter something to do!');
                 }
 
-                if ($rootScope.activeListId && $scope.todo) {
-                    var todo = Todo.save({}, {
-                        todo: $scope.todo,
-                        list_id: $rootScope.activeListId
-                    }).$promise.then(function(result) {
-                        var listIndex = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: $rootScope.activeListId }));
-                        // TODO: This is broken - if you create a new list and immediately start
-                        // adding to it, it says cannot push to undefined
-                        $rootScope.lists[listIndex].todos.push(result);
-                        $scope.todo = $scope.errors = '';
-                    }, function (error) {
+                if ($scope.todo) {
+                    var activeList = listFactory.getActiveList().then(function(list) {
+                        var todo = Todo.save({}, {
+                            todo: $scope.todo,
+                            list_id: list._id
+                        }).$promise.then(function(result) {
+                            list.todos.push(result);
+                            $scope.todo = $scope.errors = '';
+                        }, function (error) {
+                            console.log(error);
+                            $scope.error = 'Something went wrong';
+                        });
+                    }, function(error) {
                         console.log(error);
-                        $scope.error = 'Something went wrong';
                     });
+
                 }
             };
         }])

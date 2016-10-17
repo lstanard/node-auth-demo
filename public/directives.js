@@ -2,7 +2,7 @@ module.exports = function (app) {
     return app
 
         // List directives
-        .directive('listActivate', function ($rootScope, activeListFactory) {
+        .directive('listActivate', function ($rootScope, listFactory) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
@@ -10,14 +10,14 @@ module.exports = function (app) {
                         event.preventDefault();
                         elem.parent().children().removeClass('active');
                         elem.addClass('active');
-                        activeListFactory.setActive(scope.list._id);
+                        // activeListFactory.setActive(scope.list._id);
                     });
                 }
             };
         })
 
         // Todo directives
-        .directive('todoEdit', function ($rootScope, Todo) {
+        .directive('todoEdit', function ($rootScope, Todo, listFactory) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
@@ -34,7 +34,7 @@ module.exports = function (app) {
                 }
             }
         })
-        .directive('todoOptions', function ($rootScope, Todo) {
+        .directive('todoOptions', function ($rootScope, Todo, listFactory) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
@@ -55,7 +55,7 @@ module.exports = function (app) {
                 }
             }
         })
-        .directive('toggleComplete', function ($rootScope, Todo) {
+        .directive('toggleComplete', function ($rootScope, Todo, listFactory) {
             return {
                 link: function (scope, elem, attrs) {
                     scope.toggleComplete = function (todo) {
