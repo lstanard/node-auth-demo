@@ -56200,8 +56200,8 @@
 	            }
 	
 	            if ($scope.todo) {
-	                var activeList = listFactory.getActiveList().then(function (list) {
-	                    var todo = Todo.save({}, {
+	                listFactory.getActiveList().then(function (list) {
+	                    Todo.save({}, {
 	                        todo: $scope.todo,
 	                        list_id: list._id
 	                    }).$promise.then(function (result) {
