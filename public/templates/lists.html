@@ -6,7 +6,7 @@
                 <div class="todo-sidebar">
                     <h3>Your lists <a href="#" ng-click="openModal()"><span>New list</span></a></h3>
                     <ul>
-                        <li ng-repeat="list in lists" id="listId-{{list._id}}" list-activate>
+                        <li ng-repeat="list in lists" list-activate>
                             <a href="#">
                                 <span class="list-name">{{list.name}}</span>
                                 <a href="#" ng-click="delete(list)">Delete</a>

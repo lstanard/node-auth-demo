@@ -6,10 +6,12 @@ module.exports = function (app) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
+                    var activeListResource = listFactory.getActiveList();
+
                     elem.find('a').on('click', function(event) {
                         event.preventDefault();
-                        elem.parent().children().removeClass('active');
-                        elem.addClass('active');
+                        // elem.parent().children().removeClass('active');
+                        // elem.addClass('active');
                         // activeListFactory.setActive(scope.list._id);
                     });
                 }
@@ -22,14 +24,17 @@ module.exports = function (app) {
                 scope: false,
                 link: function (scope, elem, attrs) {
                     var prev = elem.find('input')[0].value;
+                    var activeListResource = listFactory.getActiveList();
 
                     scope.update = function (todo) {
-                        Todo.update(
-                            // Find todo by id
-                            { list_id: $rootScope.activeListId, todo_id: todo._id },
-                            // Properties to update
-                            { todo: todo.text }
-                        );
+                        activeListResource.then(function(list) {
+                            Todo.update(
+                                // Find todo by id
+                                { list_id: list._id, todo_id: todo._id },
+                                // Properties to update
+                                { todo: todo.text }
+                            );
+                        });
                     }
                 }
             }
@@ -38,18 +43,18 @@ module.exports = function (app) {
             return {
                 scope: false,
                 link: function (scope, elem, attrs) {
-                    scope.delete = function (todo) {
-                        var listIndex = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: $rootScope.activeListId }));
-                        console.log(listIndex);
-                        var index = _.indexOf($rootScope.lists[listIndex].todos, _.find($rootScope.lists[listIndex].todos, { _id: todo._id }));
-                        console.log(index);
+                    var activeListResource = listFactory.getActiveList();
 
-                        Todo.delete({
-                            list_id: $rootScope.activeListId,
-                            todo_id: todo._id
-                        }, function () {
-                            // TODO: Fix - it's removing from the wrong list on the front-end
-                            $rootScope.lists[listIndex].todos.splice(index, 1);
+                    scope.delete = function (todo) {
+                        activeListResource.then(function(list) {
+                            var index = _.indexOf(list.todos, _.find(list.todos, { _id: todo._id }));
+
+                            Todo.delete({
+                                list_id: list._id,
+                                todo_id: todo._id
+                            }, function () {
+                                list.todos.splice(index, 1);
+                            });
                         });
                     }
                 }
@@ -58,14 +63,18 @@ module.exports = function (app) {
         .directive('toggleComplete', function ($rootScope, Todo, listFactory) {
             return {
                 link: function (scope, elem, attrs) {
+                    var activeListResource = listFactory.getActiveList();
+
                     scope.toggleComplete = function (todo) {
-                        Todo.update(
-                            { list_id: $rootScope.activeListId, todo_id: todo._id },
-                            {
-                                todo: todo.text,
-                                completed: todo.completed
-                            }
-                        );
+                        activeListResource.then(function(list) {
+                            Todo.update(
+                                { list_id: list._id, todo_id: todo._id },
+                                {
+                                    todo: todo.text,
+                                    completed: todo.completed
+                                }
+                            );
+                        });
                     }
                 }
             }
