@@ -22,6 +22,21 @@ module.exports = function (app) {
                         }
                     });
                 },
+                removeList: function (list) {
+                    var index = _.indexOf(userLists, _.find(userLists, { _id: list._id }));
+                    return new Promise(function(resolve, reject) {
+                        if (typeof list !== 'undefined') {
+                            List.delete({
+                                list_id: list._id
+                            }, function () {
+                                userLists.splice(index, 1);
+                                resolve(userLists);
+                            });
+                        } else {
+                            reject('List is undefined');
+                        }
+                    });
+                },
                 getLists: function () {
                     return new Promise(function(resolve, reject) {
                         if (!userLists) {
@@ -124,17 +139,6 @@ module.exports = function (app) {
         })
         .factory('userListFactory', function ($rootScope, List, Todo, activeListFactory, listFactory) {
             var factory = {};
-
-            factory.removeList = function (list) {
-                var index = _.indexOf($rootScope.lists, _.find($rootScope.lists, { _id: list._id }));
-                if (typeof list !== 'undefined') {
-                    List.delete({
-                        list_id: list._id
-                    }, function () {
-                        $rootScope.lists.splice(index, 1);
-                    });
-                }
-            };
 
             factory.updateList = function () {
                 // add update list

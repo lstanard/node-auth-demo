@@ -37,9 +37,16 @@ module.exports = function (app) {
                 });
             };
 
+            // Delete list
             $scope.delete = function(list) {
-                userListFactory.removeList(list);
+                listFactory.removeList(list).then(function(lists) {
+                    $scope.lists = lists;
+                }, function (error) {
+                    console.log(error);
+                })
             };
+
+
 
             // TODO: Refactor into factory
             // Save new todo
