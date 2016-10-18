@@ -55938,6 +55938,8 @@
 	                });
 	            },
 	            addList: function addList(data) {
+	                var self = this;
+	
 	                return new Promise(function (resolve, reject) {
 	                    if (data.value.name) {
 	                        List.save({}, {
@@ -55945,6 +55947,7 @@
 	                            description: data.value.description
 	                        }).$promise.then(function (result) {
 	                            userLists.push(result);
+	                            self.setActiveList(result);
 	                            resolve(userLists);
 	                        }, function (error) {
 	                            reject(error);

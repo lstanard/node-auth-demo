@@ -37,6 +37,8 @@ module.exports = function (app) {
                     });
                 },
                 addList: function(data) {
+                    var self = this;
+
                     return new Promise(function(resolve, reject) {
                         if (data.value.name) {
                             List.save({}, {
@@ -44,6 +46,7 @@ module.exports = function (app) {
                                 description: data.value.description
                             }).$promise.then(function(result) {
                                 userLists.push(result);
+                                self.setActiveList(result);
                                 resolve(userLists);
                             }, function(error) {
                                 reject(error);
