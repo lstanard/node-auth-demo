@@ -7,10 +7,6 @@ module.exports = function (app) {
 
             return {
                 setActiveList: function (list) {
-                    // 1) Set active list by query param
-                    // 2) Set active list by list resource passed in, change URL to reflect new active list
-                    // 3) First list
-
                     var search = $location.search();
 
                     if (typeof list === 'undefined' && search.list_id) {
@@ -58,13 +54,12 @@ module.exports = function (app) {
                     });
                 },
                 removeList: function (list) {
-                    var index = _.indexOf(userLists, _.find(userLists, { _id: list._id }));
                     return new Promise(function(resolve, reject) {
                         if (typeof list !== 'undefined') {
                             List.delete({
                                 list_id: list._id
                             }, function () {
-                                userLists.splice(index, 1);
+                                userLists.splice(list.$index, 1);
                                 resolve(userLists);
                             });
                         } else {

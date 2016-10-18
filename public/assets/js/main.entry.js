@@ -55908,10 +55908,6 @@
 	
 	        return {
 	            setActiveList: function setActiveList(list) {
-	                // 1) Set active list by query param
-	                // 2) Set active list by list resource passed in, change URL to reflect new active list
-	                // 3) First list
-	
 	                var search = $location.search();
 	
 	                if (typeof list === 'undefined' && search.list_id) {
@@ -55959,13 +55955,12 @@
 	                });
 	            },
 	            removeList: function removeList(list) {
-	                var index = _.indexOf(userLists, _.find(userLists, { _id: list._id }));
 	                return new Promise(function (resolve, reject) {
 	                    if (typeof list !== 'undefined') {
 	                        List.delete({
 	                            list_id: list._id
 	                        }, function () {
-	                            userLists.splice(index, 1);
+	                            userLists.splice(list.$index, 1);
 	                            resolve(userLists);
 	                        });
 	                    } else {
@@ -56070,10 +56065,11 @@
 	    return app
 	
 	    // List directives
-	    .directive('listActivate', function ($rootScope, listFactory) {
+	    .directive('listActivate', function (listFactory) {
 	        return {
 	            restrict: 'A',
 	            link: function link(scope, elem, attrs) {
+	                // TODO: clean this up
 	                listFactory.getActiveList().then(function (list) {
 	                    if (scope.list._id === list._id) {
 	                        elem.parent().children().removeClass('active');
@@ -56092,15 +56088,14 @@
 	    })
 	
 	    // Todo directives
-	    .directive('todoEdit', function ($rootScope, Todo, listFactory) {
+	    .directive('todoEdit', function (Todo, listFactory) {
 	        return {
 	            scope: false,
 	            link: function link(scope, elem, attrs) {
 	                var prev = elem.find('input')[0].value;
-	                var activeListResource = listFactory.getActiveList();
 	
 	                scope.update = function (todo) {
-	                    activeListResource.then(function (list) {
+	                    listFactory.getActiveList().then(function (list) {
 	                        Todo.update(
 	                        // Find todo by id
 	                        { list_id: list._id, todo_id: todo._id },
@@ -56110,33 +56105,25 @@
 	                };
 	            }
 	        };
-	    }).directive('todoOptions', function ($rootScope, Todo, listFactory) {
+	    }).directive('todoOptions', function (Todo, listFactory) {
 	        return {
 	            scope: false,
 	            link: function link(scope, elem, attrs) {
-	                var activeListResource = listFactory.getActiveList();
-	
 	                scope.delete = function (todo) {
-	                    activeListResource.then(function (list) {
-	                        var index = _.indexOf(list.todos, _.find(list.todos, { _id: todo._id }));
-	
-	                        Todo.delete({
-	                            list_id: list._id,
-	                            todo_id: todo._id
-	                        }, function () {
-	                            list.todos.splice(index, 1);
-	                        });
+	                    Todo.delete({
+	                        list_id: scope.$parent.list._id,
+	                        todo_id: todo._id
+	                    }, function () {
+	                        scope.$parent.list.todos.splice(scope.$parent.list.todos.indexOf(todo), 1);
 	                    });
 	                };
 	            }
 	        };
-	    }).directive('toggleComplete', function ($rootScope, Todo, listFactory) {
+	    }).directive('toggleComplete', function (Todo, listFactory) {
 	        return {
 	            link: function link(scope, elem, attrs) {
-	                var activeListResource = listFactory.getActiveList();
-	
 	                scope.toggleComplete = function (todo) {
-	                    activeListResource.then(function (list) {
+	                    listFactory.getActiveList().then(function (list) {
 	                        Todo.update({ list_id: list._id, todo_id: todo._id }, {
 	                            todo: todo.text,
 	                            completed: todo.completed
