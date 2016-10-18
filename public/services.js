@@ -9,17 +9,26 @@ module.exports = function (app) {
                 setActiveList: function (list) {
                     // 1) Set active list by query param
                     // 2) Set active list by list resource passed in, change URL to reflect new active list
+                    // 3) First list
 
                     var search = $location.search();
 
-                    if (search.list_id) {
-                        var listResource = _.find(userLists, { _id: list._id });
+                    if (typeof list === 'undefined' && search.list_id) {
+                        var listResource = _.find(userLists, { _id: search.list_id });
                         if (listResource) {
                             activeListResource = listResource;
                         }
                     } else if (typeof list !== 'undefined') {
                         activeListResource = list;
                         $location.search('list_id', activeListResource._id);
+                    } else {
+                        if (!userLists) {
+                            this.getLists().then(function(lists) {
+                                activeListResource = lists[0];
+                            });
+                        } else if (userLists.length > 0) {
+                            activeListResource = userLists[0];
+                        }
                     }
                 },
                 getActiveList: function () {

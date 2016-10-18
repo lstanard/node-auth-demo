@@ -17,7 +17,7 @@ module.exports = function (app) {
                         event.preventDefault();
                         elem.parent().children().removeClass('active');
                         elem.addClass('active');
-                        listFactory.setActiveList(scope);
+                        listFactory.setActiveList(scope.list);
                     });
                 }
             };

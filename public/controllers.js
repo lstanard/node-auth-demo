@@ -13,7 +13,7 @@ module.exports = function (app) {
             // Get user lists
             listFactory.getLists().then(function(lists) {
                 $scope.lists = lists;
-                listFactory.setActiveList($scope.lists[0]);
+                listFactory.setActiveList();
             }, function (error) {
                 console.log(error);
             });
@@ -60,20 +60,21 @@ module.exports = function (app) {
 
                 if ($scope.todo) {
                     listFactory.getActiveList().then(function(list) {
-                        Todo.save({}, {
-                            todo: $scope.todo,
-                            list_id: list._id
-                        }).$promise.then(function(result) {
-                            list.todos.push(result);
-                            $scope.todo = $scope.errors = '';
-                        }, function (error) {
-                            console.log(error);
-                            $scope.error = 'Something went wrong';
-                        });
+                        if (list) {
+                            Todo.save({}, {
+                                todo: $scope.todo,
+                                list_id: list._id
+                            }).$promise.then(function(result) {
+                                list.todos.push(result);
+                                $scope.todo = $scope.errors = '';
+                            }, function (error) {
+                                console.log(error);
+                                $scope.error = 'Something went wrong';
+                            });
+                        }
                     }, function(error) {
                         console.log(error);
                     });
-
                 }
             };
         }])

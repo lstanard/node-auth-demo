@@ -55910,17 +55910,26 @@
 	            setActiveList: function setActiveList(list) {
 	                // 1) Set active list by query param
 	                // 2) Set active list by list resource passed in, change URL to reflect new active list
+	                // 3) First list
 	
 	                var search = $location.search();
 	
-	                if (search.list_id) {
-	                    var listResource = _.find(userLists, { _id: list._id });
+	                if (typeof list === 'undefined' && search.list_id) {
+	                    var listResource = _.find(userLists, { _id: search.list_id });
 	                    if (listResource) {
 	                        activeListResource = listResource;
 	                    }
 	                } else if (typeof list !== 'undefined') {
 	                    activeListResource = list;
 	                    $location.search('list_id', activeListResource._id);
+	                } else {
+	                    if (!userLists) {
+	                        this.getLists().then(function (lists) {
+	                            activeListResource = lists[0];
+	                        });
+	                    } else if (userLists.length > 0) {
+	                        activeListResource = userLists[0];
+	                    }
 	                }
 	            },
 	            getActiveList: function getActiveList() {
@@ -56076,7 +56085,7 @@
 	                    event.preventDefault();
 	                    elem.parent().children().removeClass('active');
 	                    elem.addClass('active');
-	                    listFactory.setActiveList(scope);
+	                    listFactory.setActiveList(scope.list);
 	                });
 	            }
 	        };
@@ -56156,7 +56165,7 @@
 	        // Get user lists
 	        listFactory.getLists().then(function (lists) {
 	            $scope.lists = lists;
-	            listFactory.setActiveList($scope.lists[0]);
+	            listFactory.setActiveList();
 	        }, function (error) {
 	            console.log(error);
 	        });
@@ -56201,16 +56210,18 @@
 	
 	            if ($scope.todo) {
 	                listFactory.getActiveList().then(function (list) {
-	                    Todo.save({}, {
-	                        todo: $scope.todo,
-	                        list_id: list._id
-	                    }).$promise.then(function (result) {
-	                        list.todos.push(result);
-	                        $scope.todo = $scope.errors = '';
-	                    }, function (error) {
-	                        console.log(error);
-	                        $scope.error = 'Something went wrong';
-	                    });
+	                    if (list) {
+	                        Todo.save({}, {
+	                            todo: $scope.todo,
+	                            list_id: list._id
+	                        }).$promise.then(function (result) {
+	                            list.todos.push(result);
+	                            $scope.todo = $scope.errors = '';
+	                        }, function (error) {
+	                            console.log(error);
+	                            $scope.error = 'Something went wrong';
+	                        });
+	                    }
 	                }, function (error) {
 	                    console.log(error);
 	                });
