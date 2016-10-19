@@ -54,7 +54,6 @@ module.exports = function (app) {
 
             // Set global application name
             $rootScope.appTitle = 'todo\'r';
-            $rootScope.lists = [];
 
             $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
                 if (rejection === 'Not authenticated') {
