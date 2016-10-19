@@ -55885,7 +55885,6 @@
 	
 	        // Set global application name
 	        $rootScope.appTitle = 'todo\'r';
-	        $rootScope.lists = [];
 	
 	        $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {
 	            if (rejection === 'Not authenticated') {
@@ -55992,12 +55991,20 @@
 	                });
 	            },
 	            removeList: function removeList(list) {
+	                var self = this;
+	                var index = _.indexOf(userLists, _.find(userLists, { _id: list._id }));
+	
 	                return new Promise(function (resolve, reject) {
 	                    if (typeof list !== 'undefined') {
 	                        List.delete({
 	                            list_id: list._id
 	                        }, function () {
-	                            userLists.splice(list.$index, 1);
+	                            self.getActiveList().then(function (activeList) {
+	                                if (activeList._id === list._id) {
+	                                    self.setActiveList();
+	                                }
+	                            });
+	                            userLists.splice(index, 1);
 	                            resolve(userLists);
 	                        });
 	                    } else {
@@ -56106,7 +56113,6 @@
 	        return {
 	            restrict: 'A',
 	            link: function link(scope, elem, attrs) {
-	                // TODO: clean this up
 	                listFactory.getActiveList().then(function (list) {
 	                    if (scope.list._id === list._id) {
 	                        elem.parent().children().removeClass('active');
@@ -56216,9 +56222,7 @@
 	
 	        // Delete list
 	        $scope.delete = function (list) {
-	            listFactory.removeList(list).then(function (lists) {
-	                $scope.lists = lists; // TODO: test if this is even doing anything
-	            }, function (error) {
+	            listFactory.removeList(list).then(function (lists) {}, function (error) {
 	                console.log(error);
 	            });
 	        };

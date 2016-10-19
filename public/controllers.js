@@ -40,9 +40,7 @@ module.exports = function (app) {
 
             // Delete list
             $scope.delete = function(list) {
-                listFactory.removeList(list).then(function(lists) {
-                    $scope.lists = lists;
-                }, function (error) {
+                listFactory.removeList(list).then(function(lists) {}, function (error) {
                     console.log(error);
                 })
             };
