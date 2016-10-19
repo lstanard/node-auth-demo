@@ -55979,6 +55979,7 @@
 	                            name: data.value.name,
 	                            description: data.value.description
 	                        }).$promise.then(function (result) {
+	                            result.todos = [];
 	                            userLists.push(result);
 	                            self.setActiveList(result);
 	                            resolve(userLists);
