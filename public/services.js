@@ -78,6 +78,7 @@ module.exports = function (app) {
                                 name: data.value.name,
                                 description: data.value.description
                             }).$promise.then(function(result) {
+                                if (typeof userLists === 'undefined') userLists = [];
                                 result.todos = [];
                                 userLists.push(result);
                                 self.setActiveList(result);

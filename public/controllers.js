@@ -32,6 +32,7 @@ module.exports = function (app) {
                 dialog.closePromise.then(function(data) {
                     listFactory.addList(data).then(function(lists) {
                         $scope.lists = lists;
+                        $scope.$apply();
                     }, function (error) {
                         console.log(error);
                     });
@@ -138,7 +139,7 @@ module.exports = function (app) {
                         firstName: $scope.firstName,
                         lastName: $scope.lastName
                     }).$promise.then(function () {
-                        $location.path('/profile');
+                        $location.path('/lists');
                     }, function (error) {
                         $scope.error = 'Signup failed';
                     });
