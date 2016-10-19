@@ -6,7 +6,7 @@ module.exports = function (app) {
             $scope.pageClass = 'page-home';
         }])
 
-        .controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, ngDialog) {
+        .controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'todoFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, todoFactory, ngDialog) {
             // Set current user
             $scope.user = $rootScope.user;
             
@@ -47,9 +47,6 @@ module.exports = function (app) {
                 })
             };
 
-
-
-            // TODO: Refactor into factory
             // Save new todo
             $scope.createTodo = function () {
                 $scope.errors = [];
@@ -59,21 +56,11 @@ module.exports = function (app) {
                 }
 
                 if ($scope.todo) {
-                    listFactory.getActiveList().then(function(list) {
-                        if (list) {
-                            Todo.save({}, {
-                                todo: $scope.todo,
-                                list_id: list._id
-                            }).$promise.then(function(result) {
-                                list.todos.push(result);
-                                $scope.todo = $scope.errors = '';
-                            }, function (error) {
-                                console.log(error);
-                                $scope.error = 'Something went wrong';
-                            });
-                        }
-                    }, function(error) {
+                    todoFactory.addTodo($scope.todo).then(function(todo) {
+                        $scope.todo = $scope.errors = '';
+                    }, function (error) {
                         console.log(error);
+                        $scope.error = 'Something went wrong';
                     });
                 }
             };

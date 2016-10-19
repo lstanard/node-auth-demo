@@ -1,19 +1,48 @@
 module.exports = function (app) {
     return app
 
-        .factory('listFactory', function ($rootScope, $location, List, Todo) {
+        // Todo services
+
+        .factory('todoFactory', function (listFactory, Todo) {
+            return {
+                addTodo: function (data) {
+                    return new Promise(function(resolve, reject) {                    
+                        listFactory.getActiveList().then(function(list) {
+                            if (list) {
+                                Todo.save({}, {
+                                    todo: data,
+                                    list_id: list._id
+                                }).$promise.then(function(result) {
+                                    list.todos.push(result);
+                                    resolve(result);
+                                }, function (error) {
+                                    reject(error);
+                                });
+                            }
+                        }, function(error) {
+                            reject(error);
+                        });
+                    });
+                }
+            }
+        })
+
+        // List services
+
+        .factory('listFactory', function ($location, List, Todo) {
             var userLists = undefined;
             var activeListResource = undefined;
 
             return {
                 setActiveList: function (list) {
                     var search = $location.search();
+                    var listResource = undefined;
 
-                    if (typeof list === 'undefined' && search.list_id) {
-                        var listResource = _.find(userLists, { _id: search.list_id });
-                        if (listResource) {
-                            activeListResource = listResource;
-                        }
+                    if (search.list_id)
+                        listResource = _.find(userLists, { _id: search.list_id });
+
+                    if (typeof list === 'undefined' && typeof listResource !== 'undefined') {
+                        activeListResource = listResource;
                     } else if (typeof list !== 'undefined') {
                         activeListResource = list;
                         $location.search('list_id', activeListResource._id);
@@ -21,22 +50,26 @@ module.exports = function (app) {
                         if (!userLists) {
                             this.getLists().then(function(lists) {
                                 activeListResource = lists[0];
+                                $location.search('');
                             });
                         } else if (userLists.length > 0) {
                             activeListResource = userLists[0];
+                            $location.search('');
                         }
                     }
                 },
                 getActiveList: function () {
                     return new Promise(function(resolve, reject) {
-                        if (typeof activeListResource !== 'undefined') {
+                        if (typeof activeListResource === 'undefined') {
+                            this.setActiveList();
+                        } else if (typeof activeListResource !== 'undefined') {
                             resolve(activeListResource);
                         } else {
-                            reject('No active list found');
+                            throw new Error('activeListResource is undefined');
                         }
                     });
                 },
-                addList: function(data) {
+                addList: function (data) {
                     var self = this;
 
                     return new Promise(function(resolve, reject) {

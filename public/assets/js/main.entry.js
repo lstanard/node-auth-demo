@@ -55902,19 +55902,49 @@
 	'use strict';
 	
 	module.exports = function (app) {
-	    return app.factory('listFactory', function ($rootScope, $location, List, Todo) {
+	    return app
+	
+	    // Todo services
+	
+	    .factory('todoFactory', function (listFactory, Todo) {
+	        return {
+	            addTodo: function addTodo(data) {
+	                return new Promise(function (resolve, reject) {
+	                    listFactory.getActiveList().then(function (list) {
+	                        if (list) {
+	                            Todo.save({}, {
+	                                todo: data,
+	                                list_id: list._id
+	                            }).$promise.then(function (result) {
+	                                list.todos.push(result);
+	                                resolve(result);
+	                            }, function (error) {
+	                                reject(error);
+	                            });
+	                        }
+	                    }, function (error) {
+	                        reject(error);
+	                    });
+	                });
+	            }
+	        };
+	    })
+	
+	    // List services
+	
+	    .factory('listFactory', function ($location, List, Todo) {
 	        var userLists = undefined;
 	        var activeListResource = undefined;
 	
 	        return {
 	            setActiveList: function setActiveList(list) {
 	                var search = $location.search();
+	                var listResource = undefined;
 	
-	                if (typeof list === 'undefined' && search.list_id) {
-	                    var listResource = _.find(userLists, { _id: search.list_id });
-	                    if (listResource) {
-	                        activeListResource = listResource;
-	                    }
+	                if (search.list_id) listResource = _.find(userLists, { _id: search.list_id });
+	
+	                if (typeof list === 'undefined' && typeof listResource !== 'undefined') {
+	                    activeListResource = listResource;
 	                } else if (typeof list !== 'undefined') {
 	                    activeListResource = list;
 	                    $location.search('list_id', activeListResource._id);
@@ -55922,18 +55952,22 @@
 	                    if (!userLists) {
 	                        this.getLists().then(function (lists) {
 	                            activeListResource = lists[0];
+	                            $location.search('');
 	                        });
 	                    } else if (userLists.length > 0) {
 	                        activeListResource = userLists[0];
+	                        $location.search('');
 	                    }
 	                }
 	            },
 	            getActiveList: function getActiveList() {
 	                return new Promise(function (resolve, reject) {
-	                    if (typeof activeListResource !== 'undefined') {
+	                    if (typeof activeListResource === 'undefined') {
+	                        this.setActiveList();
+	                    } else if (typeof activeListResource !== 'undefined') {
 	                        resolve(activeListResource);
 	                    } else {
-	                        reject('No active list found');
+	                        throw new Error('activeListResource is undefined');
 	                    }
 	                });
 	            },
@@ -56148,7 +56182,7 @@
 	    return app.controller('mainController', ['$scope', '$rootScope', '$location', function ($scope, $rootScope, $location) {
 	        $scope.message = 'Welcome!';
 	        $scope.pageClass = 'page-home';
-	    }]).controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, ngDialog) {
+	    }]).controller('listController', ['$scope', '$rootScope', 'Todo', 'listFactory', 'todoFactory', 'ngDialog', function ($scope, $rootScope, Todo, listFactory, todoFactory, ngDialog) {
 	        // Set current user
 	        $scope.user = $rootScope.user;
 	
@@ -56189,7 +56223,6 @@
 	            });
 	        };
 	
-	        // TODO: Refactor into factory
 	        // Save new todo
 	        $scope.createTodo = function () {
 	            $scope.errors = [];
@@ -56199,21 +56232,11 @@
 	            }
 	
 	            if ($scope.todo) {
-	                listFactory.getActiveList().then(function (list) {
-	                    if (list) {
-	                        Todo.save({}, {
-	                            todo: $scope.todo,
-	                            list_id: list._id
-	                        }).$promise.then(function (result) {
-	                            list.todos.push(result);
-	                            $scope.todo = $scope.errors = '';
-	                        }, function (error) {
-	                            console.log(error);
-	                            $scope.error = 'Something went wrong';
-	                        });
-	                    }
+	                todoFactory.addTodo($scope.todo).then(function (todo) {
+	                    $scope.todo = $scope.errors = '';
 	                }, function (error) {
 	                    console.log(error);
+	                    $scope.error = 'Something went wrong';
 	                });
 	            }
 	        };
