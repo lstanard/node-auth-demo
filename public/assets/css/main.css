@@ -559,14 +559,18 @@ p {
     .todo-sidebar li a:hover .list-name {
       color: #5BBAE3; }
 
-.todo-sidebar .list-name {
+.todo-sidebar .name {
   color: #343738;
   font-size: 18px;
   position: relative;
   left: 0;
   transition: all .15s; }
 
-.todo-sidebar .list-color {
+.todo-sidebar .delete {
+  position: relative;
+  right: 0; }
+
+.todo-sidebar .color {
   border-radius: 2px;
   display: inline-block;
   height: 20px;

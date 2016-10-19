@@ -93,7 +93,7 @@
         }
     }
 
-    .list-name {
+    .name {
         color: $slate;
         font-size: 18px;
 
@@ -102,7 +102,12 @@
         transition: all .15s;
     }
 
-    .list-color {
+    .delete {
+        position: relative;
+        right: 0;
+    }
+
+    .color {
         border-radius: 2px;
         display: inline-block;
         height: 20px;
