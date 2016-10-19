@@ -58,6 +58,7 @@ module.exports = function (app) {
                 if ($scope.todo) {
                     todoFactory.addTodo($scope.todo).then(function(todo) {
                         $scope.todo = $scope.errors = '';
+                        $scope.$apply();
                     }, function (error) {
                         console.log(error);
                         $scope.error = 'Something went wrong';

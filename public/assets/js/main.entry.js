@@ -56217,7 +56217,7 @@
 	        // Delete list
 	        $scope.delete = function (list) {
 	            listFactory.removeList(list).then(function (lists) {
-	                $scope.lists = lists;
+	                $scope.lists = lists; // TODO: test if this is even doing anything
 	            }, function (error) {
 	                console.log(error);
 	            });
@@ -56234,6 +56234,7 @@
 	            if ($scope.todo) {
 	                todoFactory.addTodo($scope.todo).then(function (todo) {
 	                    $scope.todo = $scope.errors = '';
+	                    $scope.$apply();
 	                }, function (error) {
 	                    console.log(error);
 	                    $scope.error = 'Something went wrong';
