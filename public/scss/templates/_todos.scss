@@ -152,6 +152,11 @@
         list-style: none;
         margin: 45px 0 0;
         padding: 0;
+        display: none;
+
+        &.active {
+            display: block;
+        }
 
         a {
             text-decoration: none;

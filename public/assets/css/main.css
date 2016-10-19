@@ -602,7 +602,10 @@ p {
 .todo-body .todo-list {
   list-style: none;
   margin: 45px 0 0;
-  padding: 0; }
+  padding: 0;
+  display: none; }
+  .todo-body .todo-list.active {
+    display: block; }
   .todo-body .todo-list a {
     text-decoration: none; }
   .todo-body .todo-list li {
