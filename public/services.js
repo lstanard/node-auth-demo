@@ -90,12 +90,20 @@ module.exports = function (app) {
                     });
                 },
                 removeList: function (list) {
+                    var self = this;
+                    var index = _.indexOf(userLists, _.find(userLists, { _id: list._id }));
+
                     return new Promise(function(resolve, reject) {
                         if (typeof list !== 'undefined') {
                             List.delete({
                                 list_id: list._id
                             }, function () {
-                                userLists.splice(list.$index, 1);
+                                self.getActiveList().then(function(activeList) {
+                                    if (activeList._id === list._id) {
+                                        self.setActiveList();
+                                    }
+                                });
+                                userLists.splice(index, 1);
                                 resolve(userLists);
                             });
                         } else {

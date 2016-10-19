@@ -6,7 +6,6 @@ module.exports = function (app) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attrs) {
-                    // TODO: clean this up
                     listFactory.getActiveList().then(function(list) {
                         if (scope.list._id === list._id) {
                             elem.parent().children().removeClass('active');
