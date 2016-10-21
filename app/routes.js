@@ -86,6 +86,7 @@ module.exports = function(app, passport) {
         Todo.create({
             text: req.body.todo,
             completed: false,
+            dueDate: req.body.dueDate,
             subdomain: req.params.list_id
         }, function (err, todo) {
             if (err) {
@@ -102,7 +103,8 @@ module.exports = function(app, passport) {
             _id: req.params.todo_id
         }, {
             text: req.body.todo,
-            completed: req.body.completed
+            completed: req.body.completed,
+            due: req.body.dueDate
         }, { new: true }, function (err, todo) {
             if (err) {
                 return res.status(500).json(err);

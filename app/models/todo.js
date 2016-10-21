@@ -5,6 +5,7 @@ var ObjectId = Schema.ObjectId;
 var todoSchema = mongoose.Schema({
 	text: String,
     completed: Boolean,
+    dueDate: Date,
     subdomain: {
         type: ObjectId,
         ref: 'List'
